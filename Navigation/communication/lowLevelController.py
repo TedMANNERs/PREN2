@@ -1,3 +1,3 @@
-class Communication(object):
+class LowLevelController:
     def send(self):
         print("Send")

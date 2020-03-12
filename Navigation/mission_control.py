@@ -1,4 +1,4 @@
-class MissionControl(object):
+class MissionControl:
     def __init__(self, communication):
         self.communication = communication
         self.isMissionSuccessful = True #TODO: change to false when code is ready
