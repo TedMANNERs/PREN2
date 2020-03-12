@@ -9,6 +9,7 @@ def start_server():
 @app.route("/")
 def main():
     return render_template('index.html')
-    
+
+#TODO: Remove __main__
 if __name__ == "__main__":
     start_server()
