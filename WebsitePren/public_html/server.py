@@ -6,7 +6,7 @@ class Serv(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
             #Caution u have to update the PATH 
-            self.path = '/c:/Users/Surface/Documents/PREN2/WebsitePren/public_html/index.html'
+            self.path = '/c:/PREN2/WebsitePren/public_html/index.html'
         try:
             file_to_open = open(self.path[1:]).read()
             self.send_response(200)
