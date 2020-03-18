@@ -1,13 +1,13 @@
 class MissionControl:
-    def __init__(self, communication):
-        self.communication = communication
+    def __init__(self, lowLevelController):
+        self.lowLevelController = lowLevelController
         self.isMissionSuccessful = True #TODO: change to false when code is ready
         self.isMissionCancelled = False
 
     def start(self):
         print("Mission Control started")
         #selfTest.run()
-        #communication.subscribe(self)
+        #lowLevelController.subscribe(self)
         self.__runMission()
 
     def __runMission(self):
@@ -17,7 +17,7 @@ class MissionControl:
                 break
 
             #targetVector = navigation.getNextTargetVector()
-            #communication.sendVector(targetVector)
+            #self.lowLevelController.sendVector(targetVector)
 
         print("Mission was successful!")
 

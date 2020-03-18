@@ -4,6 +4,7 @@ from communication.usb import Usb
 from debugGui import app
 
 def main():
+    print("Start Navigation Software")
     missionControl = MissionControl(LowLevelController())
     missionControl.start()
     
