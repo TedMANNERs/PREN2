@@ -17,7 +17,7 @@ class MissionControl:
                 break
 
             #targetVector = navigation.getNextTargetVector()
-            #self.lowLevelController.sendVector(targetVector)
+            #self.lowLevelController.sendTargetVector(targetVector)
 
         print("Mission was successful!")
 

@@ -18,8 +18,8 @@ class LowLevelControllerTest(unittest.TestCase):
         
         #assert
         commandType = np.fromstring(ser.read(1), dtype=np.int8)
-        x = np.fromstring(ser.read(2), dtype=np.int16)
-        y = np.fromstring(ser.read(2), dtype=np.int16)
+        x = np.fromstring(ser.read(2), dtype=">i2")
+        y = np.fromstring(ser.read(2), dtype=">i2")
         self.assertEqual(commandType, CommandType.SendTargetVector.value)
         self.assertEqual(x, 24000)
         self.assertEqual(y, 10)
