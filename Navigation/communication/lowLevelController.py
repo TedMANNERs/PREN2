@@ -7,7 +7,12 @@ class CommandType(Enum):
     SendTargetVector = np.int8(0x02)
     SendSensorData = np.int8(0x03)
     PlayAudio = np.int8(0x04)
+    Stop = np.int8(0x05)
 
+class AudioCommand(Enum):
+    ShortBeep = np.int8(0x01)
+
+#TODO: Refactor class, remove duplicate code
 class LowLevelController:
     BIG_ENDIAN = ">"
 
@@ -21,5 +26,20 @@ class LowLevelController:
         command = CommandType.SendTargetVector.value.tobytes()
         command += targetVector.x.newbyteorder(self.BIG_ENDIAN).tobytes()
         command += targetVector.y.newbyteorder(self.BIG_ENDIAN).tobytes()
+        self.serialPort.write(command)
+        self.serialPort.close()
+
+    def sendPlayAudio(self, audioCommand):
+        print("SendPlayAudio: {0}".format(audioCommand))
+        self.serialPort.open()
+        command = CommandType.PlayAudio.value.tobytes()
+        command += audioCommand.value.tobytes()
+        self.serialPort.write(command)
+        self.serialPort.close()
+
+    def sendStop(self):
+        print("SendStop")
+        self.serialPort.open()
+        command = CommandType.Stop.value.tobytes()
         self.serialPort.write(command)
         self.serialPort.close()

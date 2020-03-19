@@ -25,6 +25,8 @@ class LowLevelControllerTest(unittest.TestCase):
         self.assertEqual(y, 10)
         ser.close()
 
+#TODO: Add more tests
+
 
 if __name__ == '__main__':
     unittest.main()
