@@ -8,9 +8,11 @@ class CommandType(Enum):
     SendSensorData = np.int8(0x03)
     PlayAudio = np.int8(0x04)
     Stop = np.int8(0x05)
+    Led = np.int8(0xF0)
 
 class AudioCommand(Enum):
     ShortBeep = np.int8(0x01)
+    LongBeep = np.int8(0x02)
 
 #TODO: Refactor class, remove duplicate code
 class LowLevelController:
