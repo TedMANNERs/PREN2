@@ -1,13 +1,17 @@
-class MissionControl:
-    def __init__(self, communication):
-        self.communication = communication
+from communication.subscriber import Subscriber
+
+class MissionControl(Subscriber):
+    def __init__(self, lowLevelController):
+        self.lowLevelController = lowLevelController
+        self.lowLevelController.startListening()
+        self.lowLevelController.subscribe(self)
         self.isMissionSuccessful = True #TODO: change to false when code is ready
         self.isMissionCancelled = False
 
     def start(self):
         print("Mission Control started")
         #selfTest.run()
-        #communication.subscribe(self)
+        #lowLevelController.subscribe(self)
         self.__runMission()
 
     def __runMission(self):
@@ -17,9 +21,15 @@ class MissionControl:
                 break
 
             #targetVector = navigation.getNextTargetVector()
-            #communication.sendVector(targetVector)
+            #self.lowLevelController.sendTargetVector(targetVector)
 
         print("Mission was successful!")
 
+    def stop(self):
+        print("Mission Control stopped")
+        self.lowLevelController.stopListening()
+
     # Is called when new data from the LLC is received.
-    #def onDataReceived(self):
+    def onCommandReceived(self, command):
+        print(command)
+        #TODO: Implement command handlers
