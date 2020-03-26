@@ -12,7 +12,7 @@ def main():
     signal.signal(signal.SIGINT, missionControl.stop) #intercept abort signal (e.g. Ctrl+C)
     
     if Usb.hasWifiDongle():
-        app.start_server()
+        app.start_webserver()
 
 if __name__ == "__main__":
     main()

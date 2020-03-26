@@ -35,6 +35,10 @@ def video_feed():
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def start_webserver():
+    print("Start webserver")
+    app.run(host='0.0.0.0', port=8080, threaded=True)
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, threaded=True)
+    start_webserver()
