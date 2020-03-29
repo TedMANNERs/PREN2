@@ -1,35 +1,69 @@
+import cv2
 from communication.subscriber import Subscriber
+from communication.lowLevelController import LowLevelController, CommandType, Command
+from navigation.navigator import Navigator
+from imageDetection.pylonDetector import PylonDetector
 
 class MissionControl(Subscriber):
-    def __init__(self, lowLevelController):
+    def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector):
         self.lowLevelController = lowLevelController
+        self.navigator = navigator
+        self.pylonDetector = pylonDetector
+
         self.lowLevelController.startListening()
         self.lowLevelController.subscribe(self)
-        self.isMissionSuccessful = True #TODO: change to false when code is ready
+
+        #TODO: Replace booleans with state machine
+        self.isMissionSuccessful = False #TODO: change to false when code is ready
         self.isMissionCancelled = False
+        self.isMissionRunning = False
 
     def start(self):
-        print("Mission Control started")
+        if self.isMissionRunning:
+            print("Mission is already running")
+            return
+            
+        print("Starting Mission Control")
         #selfTest.run()
-        #lowLevelController.subscribe(self)
+        self.isMissionRunning = True
         self.__runMission()
 
     def __runMission(self):
+        print("Mission is running")
         while not self.isMissionSuccessful:
             if self.isMissionCancelled:
                 print("Mission was cancelled!")
-                break
+                self.isMissionRunning = False
+                return
+            
+            frame = cv2.imread("./imageDetection/pylon (527).jpg") #TODO: Replace static image with actual camera image
+            detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
 
-            #targetVector = navigation.getNextTargetVector()
+            #Code to draw boxes
+            #image = self.__cvDrawBoxes(detectedPylons, frame_resized)
+            #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            print(detectedPylons)
+            #targetVector = self.navigator.getNextTargetVector()
+            #print(targetVector)
             #self.lowLevelController.sendTargetVector(targetVector)
+            self.isMissionSuccessful = True
 
         print("Mission was successful!")
 
     def stop(self):
-        print("Mission Control stopped")
+        print("Stopping Mission Control")
+        self.isMissionCancelled = True
         self.lowLevelController.stopListening()
 
     # Is called when new data from the LLC is received.
-    def onCommandReceived(self, command):
-        print(command)
-        #TODO: Implement command handlers
+    def onCommandReceived(self, command: Command):
+        print("MissionControl: Received command = {0}".format(command))
+        if command.commandType == CommandType.Start:
+            self.start()
+        elif command.commandType == CommandType.SendSensorData:
+            #TODO: Implement handling of sensor data
+            pass
+        elif command.commandType == CommandType.Stop:
+            self.stop()
+        else:
+            raise ValueError("A command of type '{0}' should never be received!".format(command.commandType))

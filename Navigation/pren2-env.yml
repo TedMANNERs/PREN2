@@ -12,3 +12,4 @@ dependencies:
   - lxml
   - rope
   - opencv
+  - scikit-image

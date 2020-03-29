@@ -5,5 +5,5 @@ class Subscriber(metaclass=abc.ABCMeta):
         self._publisher = None
 
     @abc.abstractmethod
-    def onCommandReceived(self, arg):
+    def onCommandReceived(self, command):
         pass
