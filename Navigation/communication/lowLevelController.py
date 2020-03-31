@@ -16,6 +16,10 @@ class AudioCommand(Enum):
     ShortBeep = np.int8(0x01)
     LongBeep = np.int8(0x02)
 
+class LEDCommand(Enum):
+    Off = np.int8(0x00)
+    On = np.int8(0x01)
+
 class Command:
     def __init__(self, commandType: CommandType, data=None):
         self.commandType = commandType
@@ -55,20 +59,28 @@ class LowLevelController:
         self.serialPort.write(command)
         self.serialPort.close()
 
-    def sendPlayAudio(self, audioCommand):
+    def sendPlayAudio(self, audioCommand: AudioCommand):
         print("SendPlayAudio: {0}".format(audioCommand))
-        self.serialPort.open()
+        #self.serialPort.open()
         command = CommandType.PlayAudio.value.tobytes()
         command += audioCommand.value.tobytes()
         self.serialPort.write(command)
-        self.serialPort.close()
+        #self.serialPort.close()
 
     def sendStop(self):
         print("SendStop")
-        self.serialPort.open()
+        #self.serialPort.open()
         command = CommandType.Stop.value.tobytes()
         self.serialPort.write(command)
-        self.serialPort.close()
+        #self.serialPort.close()
+
+    def sendLED(self, ledCommand: LEDCommand):
+        print("SendLED")
+        #self.serialPort.open()
+        command = CommandType.Led.value.tobytes()
+        command += ledCommand.value.tobytes()
+        self.serialPort.write(command)
+        #self.serialPort.close()
 
     def subscribe(self, subscriber):
         subscriber._publisher = self
