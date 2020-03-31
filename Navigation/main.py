@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+This is the entry point of the Horwbot Navigation Software. 
+*more header text goes here*
+"""
 import signal
 import sys
 from mission_control import MissionControl

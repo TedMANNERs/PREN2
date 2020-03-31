@@ -73,6 +73,7 @@ class MissionControl(Subscriber):
         if command.commandType == CommandType.Start:
             self.start()
         elif command.commandType == CommandType.SendSensorData:
+            print(command.data)
             #TODO: Implement handling of sensor data
             pass
         elif command.commandType == CommandType.Stop:
