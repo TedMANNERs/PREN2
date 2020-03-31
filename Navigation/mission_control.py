@@ -47,8 +47,9 @@ class MissionControl(Subscriber):
             
             frame = self.camera.getFrame()
             detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
-            print(detectedPylons)
             self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+            if detectedPylons:
+                print(detectedPylons)
 
             #targetVector = self.navigator.getNextTargetVector()
             #print(targetVector)

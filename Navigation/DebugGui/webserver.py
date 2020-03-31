@@ -2,7 +2,8 @@
 from importlib import import_module
 import os
 import cv2
-from flask import Flask, render_template, Response
+import threading
+from flask import Flask, render_template, Response, request
 from mission_control import MissionControl
 
 class Webserver:
@@ -11,6 +12,7 @@ class Webserver:
         self.app = Flask(__name__)
         self.app.add_url_rule("/", "index", self.index)
         self.app.add_url_rule("/video_feed", "video_feed", self.video_feed)
+        self.__thread = threading.Thread(target=self._run, daemon=True)
         
     def index(self):
         """One Pager of the Debug Gui"""
@@ -21,7 +23,10 @@ class Webserver:
         return Response(self._create_stream_generator(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
     def start(self):
-        print("Start webserver")
+        print("Starting webserver")
+        self.__thread.start()
+
+    def _run(self):
         self.app.run(host='0.0.0.0', port=8080, threaded=True)
 
     def _create_stream_generator(self):
