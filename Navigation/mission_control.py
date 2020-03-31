@@ -3,6 +3,7 @@ from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
+from debugGui.debugInfo import DebugInfo
 
 class MissionControl(Subscriber):
     def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector):
@@ -10,6 +11,7 @@ class MissionControl(Subscriber):
         self.navigator = navigator
         self.pylonDetector = pylonDetector
 
+        # Start listening for commands from the LLC
         self.lowLevelController.startListening()
         self.lowLevelController.subscribe(self)
 
@@ -17,6 +19,9 @@ class MissionControl(Subscriber):
         self.isMissionSuccessful = False #TODO: change to false when code is ready
         self.isMissionCancelled = False
         self.isMissionRunning = False
+
+        # Debug-Info
+        self.latestFrame = None
 
     def start(self):
         if self.isMissionRunning:
@@ -38,17 +43,18 @@ class MissionControl(Subscriber):
             
             frame = cv2.imread("./imageDetection/pylon (527).jpg") #TODO: Replace static image with actual camera image
             detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
-
-            #Code to draw boxes
-            #image = self.__cvDrawBoxes(detectedPylons, frame_resized)
-            #image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             print(detectedPylons)
+            self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+
             #targetVector = self.navigator.getNextTargetVector()
             #print(targetVector)
             #self.lowLevelController.sendTargetVector(targetVector)
             self.isMissionSuccessful = True
 
         print("Mission was successful!")
+
+    def getDebugInfo(self):
+        return DebugInfo(self.latestFrame)
 
     def stop(self):
         print("Stopping Mission Control")

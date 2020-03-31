@@ -1,4 +1,4 @@
 class Usb:
     @staticmethod
     def hasWifiDongle():
-        return False #TODO: implement wifi dongle detection
+        return True #TODO: implement wifi dongle detection
