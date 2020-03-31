@@ -4,12 +4,16 @@ from communication.lowLevelController import LowLevelController, CommandType, Co
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.debugInfo import DebugInfo
+from camera.camera_factory import CameraFactory
 
 class MissionControl(Subscriber):
     def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector):
         self.lowLevelController = lowLevelController
         self.navigator = navigator
         self.pylonDetector = pylonDetector
+
+        # Init camera
+        self.camera = CameraFactory.create()
 
         # Start listening for commands from the LLC
         self.lowLevelController.startListening()
@@ -41,7 +45,7 @@ class MissionControl(Subscriber):
                 self.isMissionRunning = False
                 return
             
-            frame = cv2.imread("./imageDetection/pylon (527).jpg") #TODO: Replace static image with actual camera image
+            frame = self.camera.getFrame()
             detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
             print(detectedPylons)
             self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
@@ -49,7 +53,8 @@ class MissionControl(Subscriber):
             #targetVector = self.navigator.getNextTargetVector()
             #print(targetVector)
             #self.lowLevelController.sendTargetVector(targetVector)
-            self.isMissionSuccessful = True
+
+            self.isMissionSuccessful = True # Remove to loop
 
         print("Mission was successful!")
 
