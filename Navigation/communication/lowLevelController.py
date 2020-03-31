@@ -85,8 +85,11 @@ class LowLevelController:
             if len(commandTypeData) <= 0:
                 sleep(0.1)
                 continue
-            
-            commandType = CommandType(np.fromstring(commandTypeData, dtype=">i1"))
+            try:
+                commandType = CommandType(np.fromstring(commandTypeData, dtype=">i1"))
+            except ValueError:
+                print("'{0}' is not a valid CommandType".format(commandTypeData))
+                continue
             if commandType == CommandType.Start:
                 print("Start received")
                 self._notify(Command(commandType))
