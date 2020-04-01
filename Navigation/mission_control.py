@@ -47,15 +47,16 @@ class MissionControl(Subscriber):
             
             frame = self.camera.getFrame()
             detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
-            self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
             if detectedPylons:
+                detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
                 print(detectedPylons)
-
-            #targetVector = self.navigator.getNextTargetVector()
+            
+            self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+            #targetVector = self.navigator.getNextTargetVector(detectedPylons)
             #print(targetVector)
             #self.lowLevelController.sendTargetVector(targetVector)
 
-            self.isMissionSuccessful = True # Remove to loop
+            #self.isMissionSuccessful = True # Remove to loop
 
         print("Mission was successful!")
 

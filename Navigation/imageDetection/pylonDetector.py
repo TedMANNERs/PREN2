@@ -13,6 +13,10 @@ class PylonDetector():
     WEIGHT_PATH = "./imageDetection/yolov3-tiny-pylon_13000.weights" # Download from OneDrive
     META_PATH = "./imageDetection/pylon.data"
     DETECTION_THRESHOLD = 0.25 # TODO: read from config file
+    
+    FOCAL_LENGTH_MM = 3.67 #3.04 for picamera, 3.67 for Logitech C920 HD PRO
+    SENSOR_HEIGHT_MM = 2.76
+    PYLON_REAL_HEIGHT_MM = 500
 
     def __init__(self):
         global metaMain, netMain
@@ -30,6 +34,11 @@ class PylonDetector():
         self.darknet_image = darknet.make_image(darknet.network_width(netMain), darknet.network_height(netMain),3)
 
     def findPylons(self, frame):
+        """
+        Returns a tupple with the following format:
+        ('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px))
+        The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
+        """
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_resized = cv2.resize(frame_rgb,
                                    (darknet.network_width(netMain),
@@ -40,6 +49,19 @@ class PylonDetector():
 
         detections = darknet.detect_image(netMain, metaMain, self.darknet_image, thresh=self.DETECTION_THRESHOLD)
         return detections, frame_resized
+
+    def calculateDistances(self, detectedPylons, frame_resized):
+        """
+        Returns a tupple with the following format:
+        [('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)]
+        The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
+        """
+        detections = []
+        for detection in detectedPylons:
+            distance = (self.FOCAL_LENGTH_MM * self.PYLON_REAL_HEIGHT_MM * frame_resized.shape[1]) / (detection[2][3] * self.SENSOR_HEIGHT_MM)
+            detection += (distance,)
+            detections.append(detection)
+        return detections
 
     def drawBoxes(self, detections, frame):
         for detection in detections:
@@ -56,6 +78,10 @@ class PylonDetector():
                         detection[0].decode() +
                         " [" + str(round(detection[1] * 100, 2)) + "]", #TODO: Document what the values mean, potentally refactor
                         (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        [0, 255, 0], 2)
+            cv2.putText(frame,
+                        "dist={0}mm".format(int(detection[3])),
+                        (pt1[0], pt1[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         [0, 255, 0], 2)
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
