@@ -1,5 +1,5 @@
 import cv2
-from camera.base_camera import BaseCamera # shows error but works?!?
+from camera.base_camera import BaseCamera
 
 class Camera(BaseCamera):
     def __init__(self, videoCapture: cv2.VideoCapture):

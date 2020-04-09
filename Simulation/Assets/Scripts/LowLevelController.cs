@@ -28,17 +28,32 @@ namespace Assets.Scripts
         On = 0x01
     }
 
+    internal class TargetVector
+    {
+        public TargetVector(short speed, short angle)
+        {
+            Speed = speed;
+            Angle = angle;
+        }
+
+        public short Speed { get; set; }
+        public short Angle { get; set; }
+    }
+
     public class LowLevelController : MonoBehaviour
     {
         private SerialPort _serialPort;
         private Task _listenerTask;
         private readonly CancellationTokenSource _listenerTokenSource = new CancellationTokenSource();
         private CancellationToken _cancellationToken;
+        private Transform _transform;
+        private TargetVector _targetVector;
 
 
         // Start is called before the first frame update
         void Start()
         {
+            _transform = GetComponent<Transform>();
             _serialPort = new SerialPort("COM4", 115200, Parity.Odd,8, StopBits.One);
             _cancellationToken = _listenerTokenSource.Token;
             _listenerTask = Task.Run(Listen, _cancellationToken);
@@ -51,7 +66,11 @@ namespace Assets.Scripts
         // Update is called once per frame
         void Update()
         {
-
+            if (_targetVector != null)
+            {
+                TargetVectorReceived(_targetVector.Speed, _targetVector.Angle);
+                _targetVector = null;
+            }
         }
 
         void OnDestroy()
@@ -84,7 +103,7 @@ namespace Assets.Scripts
 
                                 short speed = BitConverter.ToInt16(buffer, 0);
                                 short angle = BitConverter.ToInt16(buffer, 2);
-                                TargetVectorReceived(speed, angle);
+                                _targetVector = new TargetVector(speed, angle);
                                 break;
                             case CommandType.PlayAudio:
                                 AudioCommand audioCommand = (AudioCommand)_serialPort.ReadByte();
@@ -114,6 +133,8 @@ namespace Assets.Scripts
         {
             // TODO: Implement movement
             Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}");
+            _transform.Rotate(Vector3.up, angle);
+            _transform.position += _transform.forward * speed;
         }
     }
 }

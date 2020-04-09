@@ -9,6 +9,14 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Python: Application Main Simulated",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal",
+            "args": ["simulation"]
+        },
+        {
             "name": "Python: Current File (Integrated Terminal)",
             "type": "python",
             "request": "launch",
