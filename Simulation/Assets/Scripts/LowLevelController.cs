@@ -48,12 +48,14 @@ namespace Assets.Scripts
         private CancellationToken _cancellationToken;
         private Transform _transform;
         private TargetVector _targetVector;
+        private Rigidbody _rb;
 
 
         // Start is called before the first frame update
         void Start()
         {
             _transform = GetComponent<Transform>();
+            _rb = GetComponent<Rigidbody>();
             _serialPort = new SerialPort("COM4", 115200, Parity.Odd,8, StopBits.One);
             _cancellationToken = _listenerTokenSource.Token;
             _listenerTask = Task.Run(Listen, _cancellationToken);
@@ -131,10 +133,9 @@ namespace Assets.Scripts
 
         private void TargetVectorReceived(short speed, short angle)
         {
-            // TODO: Implement movement
-            Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}");
-            _transform.Rotate(Vector3.up, angle);
-            _transform.position += _transform.forward * speed;
+            Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}"); 
+            _rb.MoveRotation(Quaternion.AngleAxis(angle, _transform.up));
+            _rb.AddForce(_transform.forward * (speed / 1000f), ForceMode.VelocityChange);
         }
     }
 }
