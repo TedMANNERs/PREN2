@@ -51,13 +51,13 @@ class LowLevelController:
         self._isListening = False
 
     def sendTargetVector(self, targetVector):
-        print("SendTargetVector: [{0}, {1}]".format(targetVector.x, targetVector.y))
-        self.serialPort.open()
+        print("SendTargetVector: [{0}, {1}]".format(targetVector.speed, targetVector.angle))
+        #self.serialPort.open()
         command = CommandType.SendTargetVector.value.tobytes()
-        command += targetVector.x.newbyteorder(self.BIG_ENDIAN).tobytes()
-        command += targetVector.y.newbyteorder(self.BIG_ENDIAN).tobytes()
+        command += targetVector.speed.newbyteorder(self.BIG_ENDIAN).tobytes()
+        command += targetVector.angle.newbyteorder(self.BIG_ENDIAN).tobytes()
         self.serialPort.write(command)
-        self.serialPort.close()
+        #self.serialPort.close()
 
     def sendPlayAudio(self, audioCommand: AudioCommand):
         print("SendPlayAudio: {0}".format(audioCommand))

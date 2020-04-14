@@ -17,6 +17,7 @@ def main():
     def stop(sig, frame):
         print("Ctrl + C pressed, terminating...")
         missionControl.stop()
+        lowLevelController.stopListening()
         sys.exit(0)
 
     print("Start Navigation Software")
@@ -34,6 +35,8 @@ def main():
             missionControl.stop()
             break
         handle_command(value, missionControl, lowLevelController)
+        
+    lowLevelController.stopListening()
 
 
 def handle_command(command, missionControl, lowLevelController):

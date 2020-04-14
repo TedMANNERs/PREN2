@@ -1,4 +1,5 @@
 import cv2
+import serial
 from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command
 from navigation.navigator import Navigator
@@ -34,6 +35,7 @@ class MissionControl(Subscriber):
             
         print("Starting Mission Control")
         #selfTest.run()
+        self.isMissionCancelled = False
         self.isMissionRunning = True
         self.__runMission()
 
@@ -52,9 +54,12 @@ class MissionControl(Subscriber):
                 print(detectedPylons)
             
             self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
-            #targetVector = self.navigator.getNextTargetVector(detectedPylons)
-            #print(targetVector)
-            #self.lowLevelController.sendTargetVector(targetVector)
+            
+            targetVector = self.navigator.getNextTargetVector(detectedPylons, frame_resized)
+            try:
+                self.lowLevelController.sendTargetVector(targetVector)
+            except serial.SerialTimeoutException:
+                self.stop()
 
             #self.isMissionSuccessful = True # Remove to loop
 
@@ -66,7 +71,6 @@ class MissionControl(Subscriber):
     def stop(self):
         print("Stopping Mission Control")
         self.isMissionCancelled = True
-        self.lowLevelController.stopListening()
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):

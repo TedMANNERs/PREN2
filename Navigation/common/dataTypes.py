@@ -1,21 +1,18 @@
 import scipy
 import numpy as np
 
-class Vector:
-    def __init__(self, x: np.int16, y: np.int16):
-        self.__vector = np.array([x, y], dtype=">i2")
+class TargetVector:
+    def __init__(self, speed: np.int16, angle: np.int16):
+        self.__vector = np.array([speed, angle], dtype=">i2") #TODO: replace array with variables
 
-    def getX(self):
+    def getSpeed(self):
         return self.__vector[0]
 
-    def getY(self):
+    def getAngle(self):
         return self.__vector[1]
-    
-    def getLength(self):
-        return np.sqrt(self.__vector[0] ** 2 + self.__vector[1] ** 2)
 
     def __str__(self):
-        return "TargetVector(X={0}, Y={1})".format(self.__vector[0], self.__vector[1])
+        return "TargetVector(Speed={0}, Angle={1})".format(self.__vector[0], self.__vector[1])
 
-    x = property(getX)
-    y = property(getY)
+    speed = property(getSpeed)
+    angle = property(getAngle)
