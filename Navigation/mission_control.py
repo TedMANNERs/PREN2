@@ -58,7 +58,8 @@ class MissionControl(Subscriber):
             targetVector = self.navigator.getNextTargetVector(detectedPylons, frame_resized)
             try:
                 self.lowLevelController.sendTargetVector(targetVector)
-            except serial.SerialTimeoutException:
+            except serial.SerialTimeoutException as serialError:
+                print(serialError)
                 self.stop()
 
             #self.isMissionSuccessful = True # Remove to loop

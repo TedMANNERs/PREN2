@@ -1512,6 +1512,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Horwbot
       objectReference: {fileID: 0}
+    - target: {fileID: 4984928174213801706, guid: e9e12404009467444b0bc54aba0970b6,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984928174213801706, guid: e9e12404009467444b0bc54aba0970b6,
+        type: 3}
+      propertyPath: _isControlledByPlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4984928174213801709, guid: e9e12404009467444b0bc54aba0970b6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1569,3 +1579,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e9e12404009467444b0bc54aba0970b6, type: 3}
+--- !u!1 &2777428600782394352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4984928174213801704, guid: e9e12404009467444b0bc54aba0970b6,
+    type: 3}
+  m_PrefabInstance: {fileID: 2777428600782394351}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2777428600782394353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2777428600782394352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f1d92b0e4f945f40aa52f63eee6a000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

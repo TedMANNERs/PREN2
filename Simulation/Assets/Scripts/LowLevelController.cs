@@ -50,6 +50,9 @@ namespace Assets.Scripts
         private TargetVector _targetVector;
         private Rigidbody _rb;
 
+        [SerializeField]
+        private bool _isControlledByPlayer;
+
 
         // Start is called before the first frame update
         void Start()
@@ -68,11 +71,11 @@ namespace Assets.Scripts
         // Update is called once per frame
         void Update()
         {
-            if (_targetVector != null)
-            {
-                TargetVectorReceived(_targetVector.Speed, _targetVector.Angle);
-                _targetVector = null;
-            }
+            if (_isControlledByPlayer || _targetVector == null)
+                return;
+
+            TargetVectorReceived(_targetVector.Speed, _targetVector.Angle);
+            _targetVector = null;
         }
 
         void OnDestroy()
