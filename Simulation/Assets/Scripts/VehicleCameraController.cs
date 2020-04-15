@@ -49,20 +49,17 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    if (_imageQueue.Any())
+                    if (_imageQueue.TryDequeue(out byte[] bytes))
                     {
-                        if (_imageQueue.TryDequeue(out byte[] bytes))
+                        try
                         {
-                            try
-                            {
-                                writer.Write(bytes.Length);
-                                writer.Write(bytes);
-                                writer.Flush();
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.Log(e);
-                            }
+                            writer.Write(bytes.Length);
+                            writer.Write(bytes);
+                            writer.Flush();
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Log(e);
                         }
                     }
                 }
