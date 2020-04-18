@@ -1,4 +1,5 @@
 import cv2
+import logging
 from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command
 from navigation.navigator import Navigator
@@ -29,19 +30,19 @@ class MissionControl(Subscriber):
 
     def start(self):
         if self.isMissionRunning:
-            print("Mission is already running")
+            logging.info("Mission is already running")
             return
             
-        print("Starting Mission Control")
+        logging.info("Starting Mission Control")
         #selfTest.run()
         self.isMissionRunning = True
         self.__runMission()
 
     def __runMission(self):
-        print("Mission is running")
+        logging.info("Mission is running")
         while not self.isMissionSuccessful:
             if self.isMissionCancelled:
-                print("Mission was cancelled!")
+                logging.info("Mission was cancelled!")
                 self.isMissionRunning = False
                 return
             
@@ -49,32 +50,33 @@ class MissionControl(Subscriber):
             detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
             if detectedPylons:
                 detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
-                print(detectedPylons)
+                logging.info(detectedPylons)
             
             self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
             #targetVector = self.navigator.getNextTargetVector(detectedPylons)
-            #print(targetVector)
+            #logging.info(targetVector)
             #self.lowLevelController.sendTargetVector(targetVector)
 
             #self.isMissionSuccessful = True # Remove to loop
 
-        print("Mission was successful!")
+        logging.info("Mission was successful!")
 
     def getDebugInfo(self):
         return DebugInfo(self.latestFrame)
 
     def stop(self):
-        print("Stopping Mission Control")
+        logging.info("Stopping Mission Control")
         self.isMissionCancelled = True
         self.lowLevelController.stopListening()
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):
-        print("MissionControl: Received command = {0}".format(command))
+        #print("MissionControl: Received command = {0}".format(command))
+        logging.info("MissionControl: Received command = %s", command)
         if command.commandType == CommandType.Start:
             self.start()
         elif command.commandType == CommandType.SendSensorData:
-            print(command.data)
+            logging.info(command.data)
             #TODO: Implement handling of sensor data
             pass
         elif command.commandType == CommandType.Stop:

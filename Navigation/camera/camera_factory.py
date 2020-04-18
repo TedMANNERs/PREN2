@@ -1,6 +1,7 @@
 import os
 import sys
 import cv2
+import logging
 from camera.camera import Camera
 from camera.camera_fake import CameraFake
 from camera.camera_simulation import CameraSimulation
@@ -13,7 +14,7 @@ class CameraFactory:
 
         cap = cv2.VideoCapture(0) # Use default camera (picamera on jetson, webcam on other devices)
         if cap is None or not cap.isOpened():
-            print("Warning: Default camera was not found or could not be opened. Continuing with static image...")
+            logging.warning("Warning: Default camera was not found or could not be opened. Continuing with static image...")
             return CameraFake()
         else:
             return Camera(cap)
