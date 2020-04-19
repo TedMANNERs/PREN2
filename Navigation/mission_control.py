@@ -1,5 +1,6 @@
 import cv2
 import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command
 from navigation.navigator import Navigator

@@ -6,6 +6,7 @@ This is the entry point of the Horwbot Navigation Software.
 import signal
 import sys
 import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from mission_control import MissionControl
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from communication.usb import Usb

@@ -1,6 +1,7 @@
 import threading
 import serial
 import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 import numpy as np
 from enum import Enum
 from time import sleep

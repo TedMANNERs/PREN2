@@ -3,6 +3,7 @@ from importlib import import_module
 import os
 import cv2
 import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 import threading
 from flask import Flask, render_template, Response, request
 from mission_control import MissionControl
