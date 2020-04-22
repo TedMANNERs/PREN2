@@ -12,7 +12,7 @@ class PylonDetector():
     CONFIG_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.cfg"
     WEIGHT_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.weights" # Download from OneDrive
     META_PATH = "./imageDetection/yolo/pylon.data"
-    DETECTION_THRESHOLD = 0.25 # TODO: read from config file
+    DETECTION_THRESHOLD = 0.4 # TODO: read from config file
     
     FOCAL_LENGTH_MM = 3.67 #3.04 for picamera, 3.67 for Logitech C920 HD PRO
     SENSOR_HEIGHT_MM = 2.76
@@ -48,6 +48,7 @@ class PylonDetector():
         darknet.copy_image_from_bytes(self.darknet_image,frame_resized.tobytes())
 
         detections = darknet.detect_image(netMain, metaMain, self.darknet_image, thresh=self.DETECTION_THRESHOLD)
+        frame_resized = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
         return detections, frame_resized
 
     def calculateDistances(self, detectedPylons, frame_resized):
@@ -83,7 +84,6 @@ class PylonDetector():
                         "dist={0}mm".format(int(detection[3])),
                         (pt1[0], pt1[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         [0, 255, 0], 2)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
 
     def __convertBack(self, x, y, w, h):
