@@ -1,9 +1,0 @@
-classes = 1
-
-train = imageDetection/train/train.txt
-
-valid = imageDetection/train/test.txt
-
-names = imageDetection/classes.txt
-
-backup = imageDetection/backup/

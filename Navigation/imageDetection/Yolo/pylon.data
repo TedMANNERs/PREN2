@@ -1,0 +1,9 @@
+classes = 3
+
+train = imageDetection/yolo/train/train.txt
+
+valid = imageDetection/yolo/train/valid.txt
+
+names = imageDetection/yolo/classes.txt
+
+backup = imageDetection/yolo/backup/

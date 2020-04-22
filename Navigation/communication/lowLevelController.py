@@ -1,5 +1,7 @@
 import threading
 import serial
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 import numpy as np
 from enum import Enum
 from time import sleep
@@ -45,13 +47,13 @@ class LowLevelController:
     def startListening(self):
         self._isListening = True
         self._listenerThread.start()
-        print("Listener thread started")
+        logging.info("Listener thread started")
 
     def stopListening(self):
         self._isListening = False
 
     def sendTargetVector(self, targetVector):
-        print("SendTargetVector: [{0}, {1}]".format(targetVector.speed, targetVector.angle))
+        logging.info("SendTargetVector: [%s, %s]", targetVector.x, targetVector.y)
         #self.serialPort.open()
         command = CommandType.SendTargetVector.value.tobytes()
         command += targetVector.speed.newbyteorder(self.BIG_ENDIAN).tobytes()
@@ -60,7 +62,8 @@ class LowLevelController:
         #self.serialPort.close()
 
     def sendPlayAudio(self, audioCommand: AudioCommand):
-        print("SendPlayAudio: {0}".format(audioCommand))
+        #print("SendPlayAudio: {0}".format(audioCommand))
+        logging.info("SendPlayAudio: %s", audioCommand)
         #self.serialPort.open()
         command = CommandType.PlayAudio.value.tobytes()
         command += audioCommand.value.tobytes()
@@ -68,14 +71,14 @@ class LowLevelController:
         #self.serialPort.close()
 
     def sendStop(self):
-        print("SendStop")
+        logging.info("SendStop")
         #self.serialPort.open()
         command = CommandType.Stop.value.tobytes()
         self.serialPort.write(command)
         #self.serialPort.close()
 
     def sendLED(self, ledCommand: LEDCommand):
-        print("SendLED")
+        logging.info("SendLED")
         #self.serialPort.open()
         command = CommandType.Led.value.tobytes()
         command += ledCommand.value.tobytes()
@@ -100,20 +103,21 @@ class LowLevelController:
             try:
                 commandType = CommandType(np.fromstring(commandTypeData, dtype=">i1"))
             except ValueError:
-                print("'{0}' is not a valid CommandType".format(commandTypeData))
+                #print("'{0}' is not a valid CommandType".format(commandTypeData))
+                logging.warning("%s is not a valid CommandType", commandTypeData)
                 continue
             if commandType == CommandType.Start:
-                print("Start received")
+                logging.info("Start received")
                 self._notify(Command(commandType))
             elif commandType == CommandType.Stop:
-                print("Stop received")
+                logging.info("Stop received")
                 self._notify(Command(commandType))
             elif commandType == CommandType.SendSensorData:
-                print("SendSensorData received")
+                logging.info("SendSensorData received")
                 sensorData = self._readSensorData()
                 self._notify(Command(commandType, sensorData))
         self.serialPort.close()
-        print("Listener thread stopped")
+        logging.info("Listener thread stopped")
     
     def _readSensorData(self):
         #read IMU

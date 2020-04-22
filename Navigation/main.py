@@ -5,6 +5,8 @@ This is the entry point of the Horwbot Navigation Software.
 """
 import signal
 import sys
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from mission_control import MissionControl
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from communication.usb import Usb
@@ -15,12 +17,12 @@ from debugGui.webserver import Webserver
 def main():
     
     def stop(sig, frame):
-        print("Ctrl + C pressed, terminating...")
+        logging.info("Ctrl + C pressed, terminating...")
         missionControl.stop()
         lowLevelController.stopListening()
         sys.exit(0)
 
-    print("Start Navigation Software")
+    logging.info("Start Navigation Software")
     lowLevelController = LowLevelController()
     missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
     signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
@@ -51,16 +53,16 @@ def handle_command(command, missionControl, lowLevelController):
         elif command.endswith("2"):
             lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         else:
-            print("Invalid audio command!")
+            logging.error("Invalid audio command!")
     elif command.startswith("4"):
         if command.endswith("0"):
             lowLevelController.sendLED(LEDCommand.Off)
         elif command.endswith("1"):
             lowLevelController.sendLED(LEDCommand.On)
         else:
-            print("Invalid LED command!")
+            logging.error("Invalid LED command!")
     else:
-        print("Invalid LED command!")
+        logging.error("Invalid LED command!")
 
 if __name__ == "__main__":
     main()
