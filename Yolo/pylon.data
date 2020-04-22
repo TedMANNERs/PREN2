@@ -1,9 +1,0 @@
-classes = 3
-
-train = train/train.txt
-
-valid = train/valid.txt
-
-names = train/classes.txt
-
-backup = backup/

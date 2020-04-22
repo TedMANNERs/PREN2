@@ -9,9 +9,9 @@ metaMain = None # used in module 'darknet.py'
 
 class PylonDetector():
     
-    CONFIG_PATH = "./imageDetection/yolov3-tiny-pylon.cfg"
-    WEIGHT_PATH = "./imageDetection/yolov3-tiny-pylon_13000.weights" # Download from OneDrive
-    META_PATH = "./imageDetection/pylon.data"
+    CONFIG_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.cfg"
+    WEIGHT_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.weights" # Download from OneDrive
+    META_PATH = "./imageDetection/yolo/pylon.data"
     DETECTION_THRESHOLD = 0.25 # TODO: read from config file
     
     FOCAL_LENGTH_MM = 3.67 #3.04 for picamera, 3.67 for Logitech C920 HD PRO
