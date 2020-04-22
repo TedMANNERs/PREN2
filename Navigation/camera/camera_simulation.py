@@ -29,7 +29,6 @@ class CameraSimulationRequestHandler(socketserver.BaseRequestHandler):
 
             frame_bytes = np.asarray(data, dtype=np.uint8)
             frame = cv2.imdecode(frame_bytes, cv2.IMREAD_COLOR)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             if frame is not None:
                 self.server.frame = frame
 
