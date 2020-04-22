@@ -1,4 +1,5 @@
 import numpy as np
+import logging
 from common.dataTypes import TargetVector
 
 class Navigator:
@@ -24,9 +25,12 @@ class Navigator:
             frame_width = frame.shape[0]
             if rightmost_nearest_pylon[2][0] < (frame_width / 4): # check if the rightmost nearest pylon is in the left quarter of the frame
                 self._targetVector = self.VECTOR_STRAIGHT
+                logging.info("STRAIGHT")
             else:
                 self._targetVector = self.VECTOR_TURN_RIGHT_SLOW
+                logging.info("TURN_RIGHT_SLOW")
         else:
             self._targetVector = self.VECTOR_TURN_LEFT_SLOW
+            logging.info("TURN_LEFT_SLOW")
 
         return self._targetVector

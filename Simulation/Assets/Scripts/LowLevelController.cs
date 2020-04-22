@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,6 +54,8 @@ namespace Assets.Scripts
         [SerializeField]
         private bool _isControlledByPlayer;
 
+        private bool _isVehicleReady;
+
 
         // Start is called before the first frame update
         void Start()
@@ -66,12 +69,15 @@ namespace Assets.Scripts
             _serialPort.Open();
             byte[] startBuffer = {(byte) CommandType.Start};
             _serialPort.Write(startBuffer, 0, startBuffer.Length);
+            Invoke(nameof(ReleaseVehicle), 3f);
         }
 
-        // Update is called once per frame
-        void Update()
+        // FixedUpdate is called every fixed frame-rate frame
+        void FixedUpdate()
         {
             if (_isControlledByPlayer || _targetVector == null)
+                return;
+            if (!_isVehicleReady)
                 return;
 
             TargetVectorReceived(_targetVector.Speed, _targetVector.Angle);
@@ -82,6 +88,11 @@ namespace Assets.Scripts
         {
             _listenerTokenSource.Cancel();
             _serialPort.Close();
+        }
+
+        void ReleaseVehicle()
+        {
+            _isVehicleReady = true;
         }
 
         private void Listen()
@@ -137,8 +148,8 @@ namespace Assets.Scripts
         private void TargetVectorReceived(short speed, short angle)
         {
             Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}"); 
-            _rb.MoveRotation(Quaternion.AngleAxis(angle, _transform.up));
-            _rb.AddForce(_transform.forward * (speed / 1000f), ForceMode.VelocityChange);
+            transform.Rotate(Vector3.up, angle / 100f);
+            _rb.velocity = transform.forward * (speed * 5) * Time.fixedDeltaTime;
         }
     }
 }

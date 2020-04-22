@@ -53,7 +53,7 @@ class LowLevelController:
         self._isListening = False
 
     def sendTargetVector(self, targetVector):
-        logging.info("SendTargetVector: [%s, %s]", targetVector.speed, targetVector.angle)
+        #logging.info("SendTargetVector: [%s, %s]", targetVector.speed, targetVector.angle)
         #self.serialPort.open()
         command = CommandType.SendTargetVector.value.tobytes()
         command += targetVector.speed.newbyteorder(self.BIG_ENDIAN).tobytes()

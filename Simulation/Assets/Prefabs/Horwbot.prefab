@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4984928172710879750}
   - component: {fileID: 4984928172710879751}
   - component: {fileID: 4984928172710879748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 4984928172882415259}
   - component: {fileID: 4984928172882415256}
   - component: {fileID: 4984928172882415257}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,7 +198,7 @@ GameObject:
   - component: {fileID: 4984928173075774791}
   - component: {fileID: 4984928173075774788}
   - component: {fileID: 4984928173075774789}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Back Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,7 +292,7 @@ GameObject:
   - component: {fileID: 4984928173395555420}
   - component: {fileID: 4984928173395555421}
   - component: {fileID: 4984928173395555418}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Distance Sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,7 +385,7 @@ GameObject:
   - component: {fileID: 4984928173781005300}
   - component: {fileID: 4984928173781005301}
   - component: {fileID: 4984928173781005298}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Camera Hull
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 4984928173995244402}
   - component: {fileID: 4984928173995244403}
   - component: {fileID: 4984928173995244400}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -572,7 +572,7 @@ GameObject:
   - component: {fileID: 4984928174068394165}
   - component: {fileID: 4984928174068394162}
   - component: {fileID: 4984928174068394163}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -668,7 +668,7 @@ GameObject:
   - component: {fileID: 4984928174178466144}
   - component: {fileID: 4984928174178466145}
   - component: {fileID: 4984928174178466174}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Front Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -762,7 +762,7 @@ GameObject:
   - component: {fileID: 4984928174193665122}
   - component: {fileID: 4984928174193665123}
   - component: {fileID: 4984928174193665120}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Back Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -855,7 +855,7 @@ GameObject:
   - component: {fileID: 4984928174213801709}
   - component: {fileID: 4984928174213801706}
   - component: {fileID: 4984928174213801707}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Horwbot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -899,6 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88970ae824ccd324ebbadc091371ea5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isControlledByPlayer: 0
 --- !u!54 &4984928174213801707
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -927,7 +928,7 @@ GameObject:
   - component: {fileID: 4984928174270870617}
   - component: {fileID: 4984928174270870614}
   - component: {fileID: 4984928174270870615}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right Front Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1021,7 +1022,7 @@ GameObject:
   - component: {fileID: 4984928174534026767}
   - component: {fileID: 4984928174534026764}
   - component: {fileID: 4984928174534026765}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
