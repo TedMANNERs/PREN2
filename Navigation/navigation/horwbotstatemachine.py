@@ -18,7 +18,7 @@ transitions = [
 
 m = Machine(states=state, transitions=transitions, initial='init')
 
-# Initial Tests
+# Tests
 # TODO Extract to Testclass
 # TODO Extend tests
 print(m.state)
