@@ -1,10 +1,12 @@
+import os,sys,inspect
 import threading
 import serial
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 import numpy as np
 from enum import Enum
 from time import sleep
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from configreader import parser
 
 class CommandType(Enum):
     Start = np.int8(0x01)
@@ -39,7 +41,7 @@ class LowLevelController:
 
     def __init__(self):
         self.serialPort = serial.Serial(baudrate=115200, timeout=1, write_timeout=1, parity=serial.PARITY_ODD, stopbits=serial.STOPBITS_ONE)
-        self.serialPort.port = 'COM3' #TODO: Read COM-Port from config
+        self.serialPort.port = parser.get("ports", "SERIAL_PORT")
         self._subscribers = set()
         self._listenerThread = threading.Thread(target=self._listen)
         self._isListening = False

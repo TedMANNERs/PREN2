@@ -1,22 +1,22 @@
 # Modified code taken from 'darknet_video.py' of darknet (https://github.com/AlexeyAB/darknet) by pjreddie and AlexeyAB
-import os
+import os,sys,inspect
 import cv2
 import numpy as np
 from imageDetection import darknet
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from configreader import parser
 
 netMain = None # used in module 'darknet.py'
 metaMain = None # used in module 'darknet.py'
 
 class PylonDetector():
-    
-    CONFIG_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.cfg"
-    WEIGHT_PATH = "./imageDetection/yolo/yolov3-tiny-pylon.weights" # Download from OneDrive
-    META_PATH = "./imageDetection/yolo/pylon.data"
-    DETECTION_THRESHOLD = 0.4 # TODO: read from config file
-    
-    FOCAL_LENGTH_MM = 3.67 #3.04 for picamera, 3.67 for Logitech C920 HD PRO
-    SENSOR_HEIGHT_MM = 2.76
-    PYLON_REAL_HEIGHT_MM = 500
+    CONFIG_PATH = parser.get("paths", "CONFIG_PATH")
+    WEIGHT_PATH = parser.get("paths", "WEIGHT_PATH")
+    META_PATH = parser.get("paths", "META_PATH")
+    DETECTION_THRESHOLD = parser.get("variables", "DETECTION_THRESHOLD")
+    FOCAL_LENGTH_MM = parser.get("focal_length", "FOCAL_LENGTH_MM")
+    SENSOR_HEIGHT_MM = parser.get("variables", "SENSOR_HEIGHT_MM")
+    PYLON_REAL_HEIGHT_MM = parser.get("variables", "PYLON_REAL_HEIGHT_MM")
 
     def __init__(self):
         global metaMain, netMain

@@ -2,7 +2,6 @@ import os
 import sys
 import cv2
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from camera.camera import Camera
 from camera.camera_fake import CameraFake
 from camera.camera_simulation import CameraSimulation
