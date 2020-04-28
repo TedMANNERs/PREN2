@@ -3,7 +3,7 @@ from navigation.initializing import Initializing
 
 
 class HorwbotStateMachine(object):
-    init_instance = None
+    
     state = ['init', 'ready', 'error', {'name': 'running', 'children':['searching', 'movingToPylon', 'reversing', 'crossingObstacle', 'stopped', 'emergencyMode', 'parcourCompleted']}]
     transitions = [
             { 'trigger': 'initializing', 'source': 'init', 'dest': 'ready', 'prepare': 'execute_initializing'},
@@ -22,10 +22,10 @@ class HorwbotStateMachine(object):
 
     def __init__(self):
         self.machine = Machine(model=self, states=HorwbotStateMachine.state, transitions=HorwbotStateMachine.transitions, initial='init')
+        self.init_instance = None
 
     def execute_initializing(self): 
         self.init_instance = Initializing()
-        self.init_instance.initializing_navigation_components()
        
     def execute_startSearching(self): pass
 
