@@ -17,49 +17,8 @@ class HorwbotStateMachine(object):
             ['goToError', '*', 'error']
     ]
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.machine = Machine(model=self, states=HorwbotStateMachine.state, transitions=HorwbotStateMachine.transitions, initial='init')
-
-
-
-# Tests
-# TODO Extract to Testclass
-# TODO Extend tests
-m = HorwbotStateMachine("m")
-print(m.state)
-m.initializing()
-print(m.state)
-m.startSearching()
-print(m.state)
-m.moveForward()
-print(m.state)
-m.backToSearch()
-print(m.state)
-m.moveBackward()
-print(m.state)
-m.backToSearch()
-print(m.state)
-m.crossing()
-print(m.state)
-m.backToSearch()
-print(m.state)
-m.stopping()
-print(m.state)
-m.backToSearch()
-print(m.state)
-m.goToEmergency()
-print(m.state)
-m.backToSearch()
-print(m.state)
-m.goToError()
-print(m.state)
-m.errorHandling()
-print(m.state)
-m.startSearching()
-print(m.state)
-m.endParcour()
-print(m.state)
 
 
 
