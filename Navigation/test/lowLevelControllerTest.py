@@ -3,7 +3,7 @@ import serial
 import numpy as np
 from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command
-from common.dataTypes import Vector
+from common.dataTypes import TargetVector
 
 class DummySubscriber(Subscriber):
     def __init__(self):
@@ -19,7 +19,7 @@ class LowLevelControllerTest(unittest.TestCase):
 
     def test_send(self):
         #arrange
-        targetVector = Vector(np.int16(24000), np.int16(10))
+        targetVector = TargetVector(np.int16(24000), np.int16(10))
         ser = serial.Serial('COM4', baudrate=115200, timeout=1, parity=serial.PARITY_ODD, stopbits=serial.STOPBITS_ONE)
         
         #act
