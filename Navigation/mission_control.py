@@ -55,6 +55,9 @@ class MissionControl(Subscriber):
                 logging.info(detectedPylons)
             
             self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+            if __debug__:
+                cv2.imshow("Horwbot Image Detection", self.latestFrame)
+                cv2.waitKey(1)
             
             targetVector = self.navigator.getNextTargetVector(detectedPylons, frame_resized)
             #logging.info(targetVector)
