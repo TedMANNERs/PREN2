@@ -17,7 +17,6 @@ namespace Assets.Scripts
 
             if (Input.GetKey("d"))
                 transform.Rotate(Vector3.up * 50 * Time.deltaTime, Space.Self);
-
         }
     }
 }

@@ -47,21 +47,22 @@ namespace Assets.Scripts
         private Task _listenerTask;
         private readonly CancellationTokenSource _listenerTokenSource = new CancellationTokenSource();
         private CancellationToken _cancellationToken;
-        private Transform _transform;
         private TargetVector _targetVector;
         private Rigidbody _rb;
+        private WheelController _wheelController;
+
+        private bool _isVehicleReady;
 
         [SerializeField]
         private bool _isControlledByPlayer;
-
-        private bool _isVehicleReady;
 
 
         // Start is called before the first frame update
         void Start()
         {
-            _transform = GetComponent<Transform>();
             _rb = GetComponent<Rigidbody>();
+            _wheelController = GetComponent<WheelController>();
+
             _serialPort = new SerialPort("COM4", 115200, Parity.Odd,8, StopBits.One);
             _cancellationToken = _listenerTokenSource.Token;
             _listenerTask = Task.Run(Listen, _cancellationToken);
@@ -147,9 +148,18 @@ namespace Assets.Scripts
 
         private void TargetVectorReceived(short speed, short angle)
         {
-            Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}"); 
-            transform.Rotate(Vector3.up, angle / 100f);
-            _rb.velocity = transform.forward * (speed * 5) * Time.fixedDeltaTime;
+            Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}");
+            if (angle < 0)
+                _wheelController.TurnLeft();
+            else if (angle > 0)
+                _wheelController.TurnRight();
+            else
+            {
+                if (speed < 0)
+                    _wheelController.Reverse();
+                else
+                    _wheelController.MoveForward();
+            }
         }
     }
 }

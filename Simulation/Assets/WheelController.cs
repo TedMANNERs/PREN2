@@ -2,36 +2,97 @@
 
 public class WheelController : MonoBehaviour
 {
-    private HingeJoint _joint;
     [SerializeField]
-    private int _targetVelocity = 100;
+    private HingeJoint _wheelLeftFront;
+    [SerializeField]
+    private HingeJoint _wheelLeftBack;
+    [SerializeField]
+    private HingeJoint _wheelRightFront;
+    [SerializeField]
+    private HingeJoint _wheelRightBack;
+
+    [SerializeField]
+    private int _targetVelocityStraight = 300;
+    [SerializeField]
+    private int _targetVelocityTurn = 400;
 
     [SerializeField]
     private int _force = 100;
 
-    [SerializeField]
-    private KeyCode _key = KeyCode.UpArrow;
-
     // Start is called before the first frame update
     void Start()
     {
-        _joint = GetComponent<HingeJoint>();
-        _joint.useMotor = true;
+        _wheelLeftFront.useMotor = true;
+        _wheelLeftBack.useMotor = true;
+        _wheelRightFront.useMotor = true;
+        _wheelRightBack.useMotor = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(_key))
-        {
-            var jointMotor = _joint.motor;
-            jointMotor.targetVelocity = _targetVelocity;
-            jointMotor.force = _force;
-            _joint.motor = jointMotor;
-        }
+        bool pressedA = Input.GetKey(KeyCode.A);
+        bool pressedD = Input.GetKey(KeyCode.D);
+        bool pressedS = Input.GetKey(KeyCode.S);
+
+        if (pressedA && !pressedD)
+            MoveForward();
+        else if (!pressedA && pressedD)
+            TurnLeft();
+        else if (pressedA)
+            TurnRight();
         else
-        {
-            _joint.motor = new JointMotor();
-        }
+            Neutral();
+
+        if (pressedS)
+            Reverse();
+    }
+
+    public void Reverse()
+    {
+        _wheelLeftFront.motor = UpdateMotor(-50, _force);
+        _wheelLeftBack.motor = UpdateMotor(-50, _force);
+        _wheelRightFront.motor = UpdateMotor(-50, _force);
+        _wheelRightBack.motor = UpdateMotor(-50, _force);
+    }
+
+    public void Neutral()
+    {
+        _wheelLeftFront.motor = new JointMotor();
+        _wheelLeftBack.motor = new JointMotor();
+        _wheelRightFront.motor = new JointMotor();
+        _wheelRightBack.motor = new JointMotor();
+    }
+
+    public void TurnRight()
+    {
+        _wheelLeftFront.motor = UpdateMotor(_targetVelocityStraight, _force);
+        _wheelLeftBack.motor = UpdateMotor(_targetVelocityStraight, _force);
+        _wheelRightFront.motor = UpdateMotor(_targetVelocityStraight * -1, _force);
+        _wheelRightBack.motor = UpdateMotor(_targetVelocityStraight * -1, _force);
+    }
+
+    public void TurnLeft()
+    {
+        _wheelLeftFront.motor = UpdateMotor(1, _force);
+        _wheelLeftBack.motor = UpdateMotor(1, _force);
+        _wheelRightFront.motor = UpdateMotor(_targetVelocityTurn * -1, _force);
+        _wheelRightBack.motor = UpdateMotor(_targetVelocityTurn * -1, _force);
+    }
+
+    public void MoveForward()
+    {
+        _wheelLeftFront.motor = UpdateMotor(_targetVelocityTurn, _force);
+        _wheelLeftBack.motor = UpdateMotor(_targetVelocityTurn, _force);
+        _wheelRightFront.motor = UpdateMotor(-1, _force);
+        _wheelRightBack.motor = UpdateMotor(-1, _force);
+    }
+
+    private JointMotor UpdateMotor(int targetVelocity, int force)
+    {
+        JointMotor jointMotor = _wheelLeftFront.motor;
+        jointMotor.targetVelocity = targetVelocity;
+        jointMotor.force = force;
+        return jointMotor;
     }
 }
