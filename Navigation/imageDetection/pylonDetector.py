@@ -13,10 +13,10 @@ class PylonDetector():
     CONFIG_PATH = parser.get("paths", "CONFIG_PATH")
     WEIGHT_PATH = parser.get("paths", "WEIGHT_PATH")
     META_PATH = parser.get("paths", "META_PATH")
-    DETECTION_THRESHOLD = parser.get("variables", "DETECTION_THRESHOLD")
-    FOCAL_LENGTH_MM = parser.get("focal_length", "FOCAL_LENGTH_MM")
-    SENSOR_HEIGHT_MM = parser.get("variables", "SENSOR_HEIGHT_MM")
-    PYLON_REAL_HEIGHT_MM = parser.get("variables", "PYLON_REAL_HEIGHT_MM")
+    DETECTION_THRESHOLD = float(parser.get("variables", "DETECTION_THRESHOLD"))
+    FOCAL_LENGTH_MM = float(parser.get("focal_length", "FOCAL_LENGTH_MM"))
+    SENSOR_HEIGHT_MM = float(parser.get("variables", "SENSOR_HEIGHT_MM"))
+    PYLON_REAL_HEIGHT_MM = int(parser.get("variables", "PYLON_REAL_HEIGHT_MM"))
 
     def __init__(self):
         global metaMain, netMain
