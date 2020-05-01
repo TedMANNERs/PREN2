@@ -36,11 +36,11 @@ public class WheelController : MonoBehaviour
         bool pressedS = Input.GetKey(KeyCode.S);
 
         if (pressedA && !pressedD)
-            MoveForward();
-        else if (!pressedA && pressedD)
             TurnLeft();
-        else if (pressedA)
+        else if (!pressedA && pressedD)
             TurnRight();
+        else if (pressedA)
+            MoveForward();
         else
             Neutral();
 
@@ -50,10 +50,10 @@ public class WheelController : MonoBehaviour
 
     public void Reverse()
     {
-        _wheelLeftFront.motor = UpdateMotor(-50, _force);
-        _wheelLeftBack.motor = UpdateMotor(-50, _force);
-        _wheelRightFront.motor = UpdateMotor(-50, _force);
-        _wheelRightBack.motor = UpdateMotor(-50, _force);
+        _wheelLeftFront.motor = UpdateMotor(-150, _force);
+        _wheelLeftBack.motor = UpdateMotor(-150, _force);
+        _wheelRightFront.motor = UpdateMotor(150, _force);
+        _wheelRightBack.motor = UpdateMotor(150, _force);
     }
 
     public void Neutral()
@@ -64,7 +64,7 @@ public class WheelController : MonoBehaviour
         _wheelRightBack.motor = new JointMotor();
     }
 
-    public void TurnRight()
+    public void MoveForward()
     {
         _wheelLeftFront.motor = UpdateMotor(_targetVelocityStraight, _force);
         _wheelLeftBack.motor = UpdateMotor(_targetVelocityStraight, _force);
@@ -80,7 +80,7 @@ public class WheelController : MonoBehaviour
         _wheelRightBack.motor = UpdateMotor(_targetVelocityTurn * -1, _force);
     }
 
-    public void MoveForward()
+    public void TurnRight()
     {
         _wheelLeftFront.motor = UpdateMotor(_targetVelocityTurn, _force);
         _wheelLeftBack.motor = UpdateMotor(_targetVelocityTurn, _force);
