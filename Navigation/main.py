@@ -2,6 +2,8 @@
 """
 This is the entry point of the Horwbot Navigation Software. 
 *more header text goes here*
+
+use "-O" argument to run the program in release mode (Removes asserts and __debug__).
 """
 import signal
 import sys

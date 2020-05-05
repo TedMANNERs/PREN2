@@ -8,3 +8,5 @@ This is the navigation software for the PREN2 Robot "Horwbot".
 
 ## How to run on the actual device:
 1. **TODO**
+2. run "python3 main.py -O"
+   -O is used to run the program in release mode which removes asserts and \_\_debug\_\_ code
