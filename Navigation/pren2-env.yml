@@ -13,3 +13,4 @@ dependencies:
   - rope
   - opencv
   - scikit-image
+  - transitions
