@@ -6,39 +6,48 @@ This is the entry point of the Horwbot Navigation Software.
 import signal
 import sys
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from mission_control import MissionControl
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from communication.usb import Usb
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
+from navigation.horwbotstatemachine import HorwbotStateMachine
 
 def main():
-    
+    logging.basicConfig(format='%(asctime)s - %(levelname)s:%(message)s', level=logging.DEBUG)
+
     def stop(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
-        missionControl.stop()
-        lowLevelController.stopListening()
+        state_machine.stop() #TODO: Fix pylint error
         sys.exit(0)
-
-    logging.info("Start Navigation Software")
+        
     lowLevelController = LowLevelController()
     missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
+    state_machine = HorwbotStateMachine(missionControl)
     signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
+    logging.info("State = %s", state_machine.states)
+    state_machine.initialize() #TODO: Fix pylint error
+
+    # TODO: Migrate the code below to state machine
+
+    # logging.info("Start Navigation Software")
+    # lowLevelController = LowLevelController()
+    # missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
+    # signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
     
-    if Usb.hasWifiDongle():
-        webserver = Webserver(missionControl)
-        webserver.start()
+    # if Usb.hasWifiDongle():
+    #     webserver = Webserver(missionControl)
+    #     webserver.start()
     
-    while True:
-        value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
-        if value == "":
-            missionControl.stop()
-            break
-        handle_command(value, missionControl, lowLevelController)
+    # while True:
+    #     value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
+    #     if value == "":
+    #         missionControl.stop()
+    #         break
+    #     handle_command(value, missionControl, lowLevelController)
         
-    lowLevelController.stopListening()
+    # lowLevelController.stopListening()
 
 
 def handle_command(command, missionControl, lowLevelController):

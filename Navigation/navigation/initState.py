@@ -9,12 +9,12 @@ from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
 
-class Initializing():
-    
-    def __init__(self):
-        self.lowLevelController = LowLevelController()
-        self.missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
-        #TODO signal.signal(signal.SIGINT, stop)
+class InitState():
+    def __init__(self, missionControl: MissionControl):
+        self.missionControl = missionControl
+
+    def initialize(self):
         if Usb.hasWifiDongle():
-            self.webserver = Webserver(missionControl)
+            self.webserver = Webserver(self.missionControl)
             self.webserver.start()
+        print("init_prepare")
