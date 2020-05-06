@@ -14,20 +14,20 @@ class MissionControl(Subscriber):
         self.navigator = navigator
         self.pylonDetector = pylonDetector
 
-        # Init camera
-        self.camera = CameraFactory.create()
-
-        # Start listening for commands from the LLC
-        self.lowLevelController.startListening()
-        self.lowLevelController.subscribe(self)
-
         #TODO: Replace booleans with state machine
-        self.isMissionSuccessful = False #TODO: change to false when code is ready
+        self.isMissionSuccessful = False
         self.isMissionCancelled = False
         self.isMissionRunning = False
 
         # Debug-Info
         self.latestFrame = None
+
+    def initialize(self):
+        # Init camera
+        self.camera = CameraFactory.create()
+        # Start listening for commands from the LLC
+        self.lowLevelController.startListening()
+        self.lowLevelController.subscribe(self)
 
     def start(self):
         if self.isMissionRunning:
@@ -67,8 +67,6 @@ class MissionControl(Subscriber):
                 print(serialError)
                 self.stop()
 
-            #self.isMissionSuccessful = True # Remove to loop
-
         logging.info("Mission was successful!")
 
     def getDebugInfo(self):
@@ -77,6 +75,11 @@ class MissionControl(Subscriber):
     def stop(self):
         logging.info("Stopping Mission Control")
         self.isMissionCancelled = True
+
+    def abort(self):
+        logging.info("Aborting...")
+        self.stop()
+        self.lowLevelController.stopListening()
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):

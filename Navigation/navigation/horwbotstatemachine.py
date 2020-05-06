@@ -2,18 +2,23 @@ from transitions.extensions.nesting import NestedState
 from transitions.extensions import HierarchicalMachine as Machine
 from navigation.initState import InitState
 from mission_control import MissionControl
+from navigation.navigator import Navigator
+from imageDetection.pylonDetector import PylonDetector
+from debugGui.webserver import Webserver
+from communication.lowLevelController import LowLevelController
 
 
 class HorwbotStateMachine:
     
-    states = [NestedState(name='init', on_exit=['init_on_exit']), 'ready', 'error', 'stopped', {'name': 'running', 'children':['searching', 'movingToPylon', 'reversing', 'crossingObstacle', 'emergencyMode', 'parcourCompleted']}]
+    states = [NestedState(name='init', on_exit=['init_on_exit']), 'ready', 'error', 'aborted', {'name': 'running', 'children':['searching', 'movingToPylon', 'reversing', 'crossingObstacle', 'emergencyMode', 'parcourCompleted']}]
     transitions = [
             { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready', 'prepare': 'execute_initialize'},
             { 'trigger': 'startSearching', 'source': 'ready', 'dest': 'running_searching'},
             { 'trigger': 'moveForward', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
             { 'trigger': 'moveBackward', 'source': 'running_searching', 'dest': 'running_reversing'},
             { 'trigger': 'crossing', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
-            { 'trigger': 'stop', 'source': 'running', 'dest': 'stopped', 'prepare': 'execute_stop'},
+            { 'trigger': 'abort', 'source': ['ready', 'running'], 'dest': 'aborted', 'prepare': 'execute_abort'},
+            { 'trigger': 'stop', 'source': 'running', 'dest': 'ready', 'prepare': 'execute_stop'},
             { 'trigger': 'goToEmergency', 'source': 'running_searching', 'dest': 'running_emergencyMode'},
             { 'trigger': 'backToSearch', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergencyMode'], 'dest': 'running_searching'},
             { 'trigger': 'stayInSearch', 'source': 'running_searching', 'dest': '='},
@@ -22,20 +27,23 @@ class HorwbotStateMachine:
             { 'trigger': 'goToError', 'source': '*', 'dest': 'error'}
     ]
 
-    def __init__(self, missionControl: MissionControl):
-        self.missionControl = missionControl
+    def __init__(self):
+        lowLevelController = LowLevelController()
+        self.missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
         self.machine = Machine(model=self, states=HorwbotStateMachine.states, transitions=HorwbotStateMachine.transitions, initial='init')
         self.initState = InitState(self.missionControl)
 
     def init_on_exit(self): 
         print("Exit init")
 
-    def execute_initialize(self): 
+    def execute_initialize(self):
         self.initState.initialize()
        
+    def execute_abort(self):
+        self.missionControl.abort()
+
     def execute_stop(self):
         self.missionControl.stop()
-        self.missionControl.lowLevelController.stopListening()
        
     def execute_startSearching(self): pass
 

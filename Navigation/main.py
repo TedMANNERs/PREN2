@@ -8,12 +8,7 @@ use "-O" argument to run the program in release mode (Removes asserts and __debu
 import signal
 import sys
 import logging
-from mission_control import MissionControl
-from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
-from communication.usb import Usb
-from navigation.navigator import Navigator
-from imageDetection.pylonDetector import PylonDetector
-from debugGui.webserver import Webserver
+from communication.lowLevelController import AudioCommand, LEDCommand
 from navigation.horwbotstatemachine import HorwbotStateMachine
 
 def main():
@@ -21,55 +16,41 @@ def main():
 
     def stop(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
-        state_machine.stop() #TODO: Fix pylint error
+        state_machine.abort() #TODO: Fix pylint error
         sys.exit(0)
         
-    lowLevelController = LowLevelController()
-    missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
-    state_machine = HorwbotStateMachine(missionControl)
+    logging.info("Start Navigation Software")
+    state_machine = HorwbotStateMachine()
     signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
     logging.info("State = %s", state_machine.states)
     state_machine.initialize() #TODO: Fix pylint error
-
-    # TODO: Migrate the code below to state machine
-
-    # logging.info("Start Navigation Software")
-    # lowLevelController = LowLevelController()
-    # missionControl = MissionControl(lowLevelController, Navigator(), PylonDetector())
-    # signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
     
-    # if Usb.hasWifiDongle():
-    #     webserver = Webserver(missionControl)
-    #     webserver.start()
-    
-    # while True:
-    #     value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
-    #     if value == "":
-    #         missionControl.stop()
-    #         break
-    #     handle_command(value, missionControl, lowLevelController)
+    while True:
+        value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
+        if value == "":
+            break
+        handle_command(value, state_machine)
         
-    # lowLevelController.stopListening()
+    state_machine.abort() #TODO: Fix pylint error
 
 
-def handle_command(command, missionControl, lowLevelController):
+def handle_command(command, state_machine: HorwbotStateMachine):
     if command == "1":
-        missionControl.start()
+        state_machine.start()
     elif command == "2":
-        lowLevelController.sendStop()
-        missionControl.stop()
+        state_machine.stop()
     elif command.startswith("3"):
         if command.endswith("1"):
-            lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
+            state_machine.missionControl.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         elif command.endswith("2"):
-            lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
+            state_machine.missionControl.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         else:
             logging.error("Invalid audio command!")
     elif command.startswith("4"):
         if command.endswith("0"):
-            lowLevelController.sendLED(LEDCommand.Off)
+            state_machine.missionControl.lowLevelController.sendLED(LEDCommand.Off)
         elif command.endswith("1"):
-            lowLevelController.sendLED(LEDCommand.On)
+            state_machine.missionControl.lowLevelController.sendLED(LEDCommand.On)
         else:
             logging.error("Invalid LED command!")
     else:

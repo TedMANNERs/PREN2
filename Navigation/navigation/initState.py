@@ -13,7 +13,9 @@ class InitState():
     def __init__(self, missionControl: MissionControl):
         self.missionControl = missionControl
 
+    #TODO: Does putting it into horwbotstatemachine make more sense?
     def initialize(self):
+        self.missionControl.initialize()
         if Usb.hasWifiDongle():
             self.webserver = Webserver(self.missionControl)
             self.webserver.start()
