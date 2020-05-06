@@ -15,16 +15,16 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
                 { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready', 'prepare': 'execute_initialize'},
                 { 'trigger': 'start', 'source': 'ready', 'dest': 'running_searching', 'prepare': 'execute_start'},
                 { 'trigger': 'moveForward', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
-                { 'trigger': 'moveBackward', 'source': 'running_searching', 'dest': 'running_reversing'},
-                { 'trigger': 'crossing', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
+                { 'trigger': 'reverse', 'source': 'running_searching', 'dest': 'running_reversing'},
+                { 'trigger': 'cross', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
                 { 'trigger': 'abort', 'source': ['ready', 'running'], 'dest': 'aborted', 'prepare': 'execute_abort'},
                 { 'trigger': 'stop', 'source': 'running', 'dest': 'ready', 'prepare': 'execute_stop'},
-                { 'trigger': 'goToEmergency', 'source': 'running_searching', 'dest': 'running_emergencyMode'},
-                { 'trigger': 'backToSearch', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergencyMode'], 'dest': 'running_searching'},
-                { 'trigger': 'stayInSearch', 'source': 'running_searching', 'dest': '='},
+                { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergencyMode'},
+                { 'trigger': 'search', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergencyMode'], 'dest': 'running_searching'},
+                { 'trigger': 'search', 'source': 'running_searching', 'dest': '='},
                 { 'trigger': 'endParcour', 'source': 'running_searching', 'dest': 'running_parcourCompleted'},
-                { 'trigger': 'errorHandling', 'source': 'error', 'dest': 'ready'},
-                { 'trigger': 'goToError', 'source': '*', 'dest': 'error'}
+                { 'trigger': 'recover', 'source': 'error', 'dest': 'ready'},
+                { 'trigger': 'fail', 'source': '*', 'dest': 'error'}
         ]
         super().__init__(model=self, states=states, transitions=transitions, initial='init')
         lowLevelController = LowLevelController()
