@@ -16,14 +16,14 @@ def main():
 
     def stop(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
-        state_machine.abort() #TODO: Fix pylint error
+        state_machine.abort()
         sys.exit(0)
         
     logging.info("Start Navigation Software")
     state_machine = HorwbotStateMachine()
     signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
     logging.info("State = %s", state_machine.states)
-    state_machine.initialize() #TODO: Fix pylint error
+    state_machine.initialize()
     
     while True:
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
@@ -31,7 +31,7 @@ def main():
             break
         handle_command(value, state_machine)
         
-    state_machine.abort() #TODO: Fix pylint error
+    state_machine.abort()
 
 
 def handle_command(command, state_machine: HorwbotStateMachine):
