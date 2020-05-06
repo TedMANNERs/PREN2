@@ -49,6 +49,7 @@ class LowLevelController:
     def startListening(self):
         self._isListening = True
         self._listenerThread.start()
+        #TODO: Loop and wait for serial port to close?
         logging.info("Listener thread started")
 
     def stopListening(self):

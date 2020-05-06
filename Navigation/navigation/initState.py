@@ -14,6 +14,7 @@ class InitState():
 
     #TODO: Does putting it into horwbotstatemachine make more sense? What about inheriting from NestedState?
     def initialize(self):
+        #TODO: selfTest.run()
         self.missionControl.initialize()
         if Usb.hasWifiDongle():
             self.webserver = Webserver(self.missionControl)

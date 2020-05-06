@@ -30,7 +30,10 @@ def main():
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
         if value == "q":
             break
-        handle_command(value, state_machine)
+        try:
+            handle_command(value, state_machine)
+        except Exception as error:
+            logging.error(error)
         
     state_machine.abort()
 
