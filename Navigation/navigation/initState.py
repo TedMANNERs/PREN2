@@ -1,7 +1,6 @@
 import signal
 import sys
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 from mission_control import MissionControl
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from communication.usb import Usb
@@ -13,7 +12,7 @@ class InitState():
     def __init__(self, missionControl: MissionControl):
         self.missionControl = missionControl
 
-    #TODO: Does putting it into horwbotstatemachine make more sense?
+    #TODO: Does putting it into horwbotstatemachine make more sense? What about inheriting from NestedState?
     def initialize(self):
         self.missionControl.initialize()
         if Usb.hasWifiDongle():

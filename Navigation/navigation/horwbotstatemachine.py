@@ -1,5 +1,5 @@
 from transitions.extensions.nesting import NestedState
-from transitions.extensions import HierarchicalMachine
+from transitions.extensions import HierarchicalGraphMachine
 from navigation.initState import InitState
 from mission_control import MissionControl
 from navigation.navigator import Navigator
@@ -8,12 +8,12 @@ from debugGui.webserver import Webserver
 from communication.lowLevelController import LowLevelController
 
 
-class HorwbotStateMachine(HierarchicalMachine):
+class HorwbotStateMachine(HierarchicalGraphMachine):
     def __init__(self):
         states = [NestedState(name='init', on_exit=['init_on_exit']), 'ready', 'error', 'aborted',{'name': 'running', 'children':['searching', 'movingToPylon', 'reversing', 'crossingObstacle', 'emergencyMode', 'parcourCompleted']}]
         transitions = [
                 { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready', 'prepare': 'execute_initialize'},
-                { 'trigger': 'startSearching', 'source': 'ready', 'dest': 'running_searching'},
+                { 'trigger': 'start', 'source': 'ready', 'dest': 'running_searching', 'prepare': 'execute_start'},
                 { 'trigger': 'moveForward', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
                 { 'trigger': 'moveBackward', 'source': 'running_searching', 'dest': 'running_reversing'},
                 { 'trigger': 'crossing', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
@@ -43,7 +43,8 @@ class HorwbotStateMachine(HierarchicalMachine):
     def execute_stop(self):
         self.missionControl.stop()
        
-    def execute_startSearching(self): pass
+    def execute_start(self):
+        self.missionControl.start()
 
     def execute_moveForward(self): pass
        

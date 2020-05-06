@@ -25,6 +25,8 @@ class MissionControl(Subscriber):
     def initialize(self):
         # Init camera
         self.camera = CameraFactory.create()
+        # Init YOLO
+        self.pylonDetector.initialize()
         # Start listening for commands from the LLC
         self.lowLevelController.startListening()
         self.lowLevelController.subscribe(self)

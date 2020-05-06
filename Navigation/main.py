@@ -13,6 +13,7 @@ from navigation.horwbotstatemachine import HorwbotStateMachine
 
 def main():
     logging.basicConfig(format='%(asctime)s - %(levelname)s:%(message)s', level=logging.DEBUG)
+    logging.getLogger('transitions').setLevel(logging.INFO)
 
     def stop(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
@@ -26,8 +27,8 @@ def main():
     state_machine.initialize()
     
     while True:
-        value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), <Enter>=Terminate\n")
-        if value == "":
+        value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
+        if value == "q":
             break
         handle_command(value, state_machine)
         
@@ -54,7 +55,7 @@ def handle_command(command, state_machine: HorwbotStateMachine):
         else:
             logging.error("Invalid LED command!")
     else:
-        logging.error("Invalid LED command!")
+        logging.error("Invalid command!")
 
 if __name__ == "__main__":
     main()
