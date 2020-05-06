@@ -8,47 +8,16 @@ and open the template in the editor.
     Author     : Majkel
 */
 
-body{
-    margin: 0px;
-    padding: 0px;
-}
-#wrapper {
-    max-width: 100%;
-    margin: 0px auto;
-    background-color:white;
-    margin-top: 10px;
-}
-
-#header{
-    max-width: 100%;
-    background-color: black;
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 0px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-#content {
-    width: 100%;
-    height: auto;
-    text-align: center;
+#div1, #div2, #div3, #div4 {
     font-size: 12px;
-    margin: 0px auto;
-    margin-bottom: 10px;
-    margin-top: 0px;
-    padding: 20px;
-   
 }
 
-footer{
-    max-width: 100%;
-    background-color: black;
-    color: white;
-    height: auto;
-    padding: 20px;
-} 
-
+html, body { height: 100%; padding: 0; margin: 0; }
+div { width: 50%; height: 50%; float: left; }
+#div1 { background: #DDD; }
+#div2 { background: #AAA; }
+#div3 { background: #777; }
+#div4 { background: #444; }
 
 
 
