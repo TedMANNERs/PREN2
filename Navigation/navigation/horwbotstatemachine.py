@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import logging
 from transitions.extensions.nesting import NestedState
 from transitions.extensions import HierarchicalGraphMachine
@@ -33,9 +35,20 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
             { 'trigger': 'recover', 'source': 'error', 'dest': 'ready'},
             { 'trigger': 'fail', 'source': '*', 'dest': 'error'}
         ]
-        super().__init__(model=self, states=states, transitions=transitions, initial='init')
+        super().__init__(model=self, states=states, transitions=transitions, initial='init', after_state_change='on_state_changed')
         self.missionControl = MissionControl(LowLevelController(), Navigator(), PylonDetector(), self)
         self.initState = InitState(self.missionControl)
+
+    def on_state_changed(self):
+        graph = self.model.get_graph()
+        buffer = graph.pipe(format='png')
+        nparr = np.fromstring(buffer, np.uint8)
+        stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        self.missionControl.stateDiagram = stateDiagram
+        cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("Horwbot State Machine", 1000, 250)
+        cv2.imshow("Horwbot State Machine", stateDiagram)
+        cv2.waitKey(1)
 
     def execute_initialize(self):
         self.initState.initialize()

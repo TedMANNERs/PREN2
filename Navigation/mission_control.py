@@ -1,7 +1,6 @@
 import cv2
 import serial
 import logging
-import numpy as np
 from communication.subscriber import Subscriber
 from communication.lowLevelController import LowLevelController, CommandType, Command, AudioCommand, LEDCommand
 from navigation.navigator import Navigator
@@ -43,7 +42,7 @@ class MissionControl(Subscriber):
         self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
 
         if __debug__:
-            self._showDebugWindows()
+            self.showDebugWindows()
         
         if detectedPylons:
             logging.debug(detectedPylons)
@@ -88,13 +87,6 @@ class MissionControl(Subscriber):
         else:
             raise ValueError("A command of type '{0}' should never be received!".format(command.commandType))
 
-    def _showDebugWindows(self):
+    def showDebugWindows(self):
             cv2.imshow("Horwbot Image Detection", self.latestFrame)
-            cv2.waitKey(1)
-            graph = self.state_machine.model.get_graph()
-            buffer = graph.pipe(format='png')
-            nparr = np.fromstring(buffer, np.uint8)
-            self.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
-            cv2.imshow("Horwbot State Machine", self.stateDiagram)
             cv2.waitKey(1)
