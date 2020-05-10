@@ -9,9 +9,10 @@ from imageDetection.pylonDetector import PylonDetector
 from debugGui.debugInfo import DebugInfo
 from camera.camera_factory import CameraFactory
 from debugGui.webserver import Webserver
+from horwbot_state_machine import HorwbotStateMachine
 
 class MissionControl(Subscriber):
-    def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector, state_machine):
+    def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector, state_machine: HorwbotStateMachine):
         self.lowLevelController = lowLevelController
         self.navigator = navigator
         self.pylonDetector = pylonDetector

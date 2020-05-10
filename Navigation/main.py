@@ -9,7 +9,7 @@ import signal
 import sys
 import logging
 from communication.lowLevelController import AudioCommand, LEDCommand
-from navigation.horwbotstatemachine import HorwbotStateMachine
+from horwbot_state_machine import HorwbotStateMachine
 from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
