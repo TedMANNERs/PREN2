@@ -1,4 +1,3 @@
-import serial
 import logging
 from communication.subscriber import Subscriber
 from communication.usb import Usb
@@ -18,19 +17,6 @@ class MissionControl(Subscriber):
         self.state_machine = state_machine
 
         self.nextPylon = None
-
-    def initialize(self):
-        # Init camera
-        self.camera = CameraFactory.create()
-        # Init YOLO
-        self.pylonDetector.initialize()
-        # Start listening for commands from the LLC
-        self.lowLevelController.startListening()
-        self.lowLevelController.subscribe(self)
-        if Usb.hasWifiDongle():
-            self.webserver = Webserver(self)
-            self.webserver.start()
-        self.state_machine.initialized()
 
     def start(self):
         logging.info("Starting Mission Control")

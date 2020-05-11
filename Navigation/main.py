@@ -25,8 +25,9 @@ def main():
         sys.exit(0)
         
     logging.info("Start Navigation Software")
-    state_machine = HorwbotStateMachine()
-    mission_control = MissionControl(LowLevelController(), Navigator(), PylonDetector(), state_machine)
+    llc = LowLevelController()
+    state_machine = HorwbotStateMachine(llc)
+    mission_control = MissionControl(llc, Navigator(), PylonDetector(), state_machine)
     signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
     logging.info("State = %s", state_machine.states)
     mission_control.initialize()

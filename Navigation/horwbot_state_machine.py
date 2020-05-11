@@ -3,16 +3,16 @@ import numpy as np
 import logging
 from transitions.extensions.nesting import NestedState
 from transitions.extensions import HierarchicalGraphMachine
-from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
 from debugGui.debugInfo import DebugInfo
 from communication.lowLevelController import LowLevelController
+from states.init_state import InitState
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
-    def __init__(self):
-        states = ['init', 'ready', 'error', 'aborted',
+    def __init__(self, lowLevelController: LowLevelController):
+        states = [InitState(lowLevelController), 'ready', 'error', 'aborted',
             {'name': 'running', 'initial': 'searching', 'children':[
                     NestedState(name='searching', on_enter=['searching_on_enter']),
                     NestedState(name='movingToPylon', on_enter=['movingToPylon_on_enter']),
@@ -47,14 +47,16 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
         logging.info("Mission was successful!")
 
     def searching_on_enter(self):
-        try:
-            self.missionControl.search()
-        except Exception as error:
-            logging.error(error)
-            self.fail()
+        # try:
+        #     self.missionControl.search()
+        # except Exception as error:
+        #     logging.error(error)
+        #     self.fail()
+        pass
 
     def movingToPylon_on_enter(self):
-        self.missionControl.moveToNextPylon()
+        # self.missionControl.moveToNextPylon()
+        pass
 
     def execute_moveForward(self): pass
        
