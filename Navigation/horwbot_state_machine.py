@@ -7,6 +7,7 @@ from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
+from debugGui.debugInfo import DebugInfo
 from communication.lowLevelController import LowLevelController
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
@@ -35,13 +36,12 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
             { 'trigger': 'fail', 'source': '*', 'dest': 'error'}
         ]
         super().__init__(model=self, states=states, transitions=transitions, initial='init', after_state_change='on_state_changed')
-        self.stateDiagram = None
 
     def on_state_changed(self):
         graph = self.model.get_graph()
         buffer = graph.pipe(format='png')
         nparr = np.fromstring(buffer, np.uint8)
-        self.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     
     def parcourCompleted_on_enter(self):
         logging.info("Mission was successful!")

@@ -1,4 +1,3 @@
-import cv2
 import serial
 import logging
 from communication.subscriber import Subscriber
@@ -19,10 +18,6 @@ class MissionControl(Subscriber):
         self.state_machine = state_machine
 
         self.nextPylon = None
-
-        # Debug-Info
-        self.latestFrame = None
-        self.stateDiagram = None
 
     def initialize(self):
         # Init camera
@@ -47,26 +42,23 @@ class MissionControl(Subscriber):
         frame = self.camera.getFrame()
         detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
         detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
-        self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+        DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
 
         if __debug__:
-            self.showDebugWindows()
+            DebugInfo.showDebugWindows()
         
         if detectedPylons:
             logging.debug(detectedPylons)
             self.nextPylon = self.navigator.getNextPylon(detectedPylons)
             self.state_machine.moveToPylon()
 
-        targetVector = self.navigator.getNextTargetVector(self.nextPylon, self.latestFrame)
+        targetVector = self.navigator.getNextTargetVector(self.nextPylon, frame_resized)
         #logging.debug(targetVector)
         self.lowLevelController.sendTargetVector(targetVector)
 
     def moveToNextPylon(self):
         #TODO: Move to next pylon, but how???
         pass
-
-    def getDebugInfo(self):
-        return DebugInfo(self.latestFrame, self.state_machine.stateDiagram)
 
     def stop(self):
         logging.info("Stopping Mission Control")
@@ -95,11 +87,3 @@ class MissionControl(Subscriber):
             self.stop()
         else:
             raise ValueError("A command of type '{0}' should never be received!".format(command.commandType))
-
-    def showDebugWindows(self):
-        cv2.imshow("Horwbot Image Detection", self.latestFrame)
-        cv2.waitKey(1)
-        cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("Horwbot State Machine", 1400, 400)
-        cv2.imshow("Horwbot State Machine", self.state_machine.stateDiagram)
-        cv2.waitKey(1)
