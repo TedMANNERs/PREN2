@@ -11,8 +11,8 @@ from communication.lowLevelController import LowLevelController
 from states.init_state import InitState
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
-    def __init__(self, lowLevelController: LowLevelController):
-        states = [InitState(lowLevelController), 'ready', 'error', 'aborted',
+    def __init__(self, lowLevelController: LowLevelController, pylonDetector: PylonDetector):
+        states = [InitState(lowLevelController, pylonDetector), 'ready', 'error', 'aborted',
             {'name': 'running', 'initial': 'searching', 'children':[
                     NestedState(name='searching', on_enter=['searching_on_enter']),
                     NestedState(name='movingToPylon', on_enter=['movingToPylon_on_enter']),
