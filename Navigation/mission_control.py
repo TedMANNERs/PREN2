@@ -20,9 +20,7 @@ class MissionControl(Subscriber):
 
     def start(self):
         logging.info("Starting Mission Control")
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendLED(LEDCommand.On)
+        self.state_machine.start()
 
     def search(self):
         frame = CameraProvider.getCamera()
@@ -48,16 +46,12 @@ class MissionControl(Subscriber):
 
     def stop(self):
         logging.info("Stopping Mission Control")
+        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
-        self.lowLevelController.sendLED(LEDCommand.Off)
         self.state_machine.stop()
 
     def abort(self):
         logging.info("Aborting...")
-        self.stop()
-        self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
-        self.lowLevelController.stopListening()
         self.state_machine.abort()
 
     # Is called when new data from the LLC is received.

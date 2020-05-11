@@ -9,19 +9,16 @@ from debugGui.webserver import Webserver
 from debugGui.debugInfo import DebugInfo
 from communication.lowLevelController import LowLevelController
 from states.init_state import InitState
+from states.ready_state import ReadyState
+from states.aborted_state import AbortedState
+from states.running_state import RunningState
+from states.error_state import ErrorState
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
-    def __init__(self, lowLevelController: LowLevelController, pylonDetector: PylonDetector):
-        states = [InitState(lowLevelController, pylonDetector), 'ready', 'error', 'aborted',
-            {'name': 'running', 'initial': 'searching', 'children':[
-                    NestedState(name='searching', on_enter=['searching_on_enter']),
-                    NestedState(name='movingToPylon', on_enter=['movingToPylon_on_enter']),
-                    'reversing', 'crossingObstacle', 'emergencyMode',
-                    NestedState(name='parcourCompleted', on_enter=['parcourCompleted_on_enter'])
-                ]
-            }]
+    def __init__(self, llc: LowLevelController, detector: PylonDetector):
+        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc)]
         transitions = [
-            { 'trigger': 'initialized', 'source': 'init', 'dest': 'ready'},
+            { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
             { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},
             { 'trigger': 'moveToPylon', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
             { 'trigger': 'reverse', 'source': 'running_searching', 'dest': 'running_reversing'},
@@ -42,21 +39,6 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
         buffer = graph.pipe(format='png')
         nparr = np.fromstring(buffer, np.uint8)
         DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
-    def parcourCompleted_on_enter(self):
-        logging.info("Mission was successful!")
-
-    def searching_on_enter(self):
-        # try:
-        #     self.missionControl.search()
-        # except Exception as error:
-        #     logging.error(error)
-        #     self.fail()
-        pass
-
-    def movingToPylon_on_enter(self):
-        # self.missionControl.moveToNextPylon()
-        pass
 
     def execute_moveForward(self): pass
        

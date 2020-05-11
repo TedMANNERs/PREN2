@@ -19,7 +19,7 @@ def main():
     logging.basicConfig(format='%(asctime)s - %(levelname)s:%(message)s', level=logging.DEBUG)
     logging.getLogger('transitions').setLevel(logging.INFO)
 
-    def stop(sig, frame):
+    def abort(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
         mission_control.abort()
         sys.exit(0)
@@ -29,9 +29,9 @@ def main():
     pylonDetector = PylonDetector()
     state_machine = HorwbotStateMachine(llc, pylonDetector)
     mission_control = MissionControl(llc, Navigator(), pylonDetector, state_machine)
-    signal.signal(signal.SIGINT, stop) #intercept abort signal (e.g. Ctrl+C)
+    signal.signal(signal.SIGINT, abort) #intercept abort signal (e.g. Ctrl+C)
     logging.info("State = %s", state_machine.states)
-    mission_control.initialize()
+    state_machine.initialize()
     
     while True:
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
