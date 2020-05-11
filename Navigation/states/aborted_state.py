@@ -1,5 +1,5 @@
 from transitions.extensions.nesting import NestedState
-from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
+from communication.lowLevelController import LowLevelController, AudioCommand
 
 class AbortedState(NestedState):
     def __init__(self, lowLevelController: LowLevelController):
@@ -10,5 +10,4 @@ class AbortedState(NestedState):
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
-        self.lowLevelController.sendLED(LEDCommand.Off)
         self.lowLevelController.stopListening()

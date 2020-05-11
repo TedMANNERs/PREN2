@@ -15,8 +15,8 @@ from states.running_state import RunningState
 from states.error_state import ErrorState
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
-    def __init__(self, llc: LowLevelController, detector: PylonDetector):
-        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc)]
+    def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
+        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator)]
         transitions = [
             { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
             { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},

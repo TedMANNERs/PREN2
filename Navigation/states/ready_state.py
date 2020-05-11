@@ -2,10 +2,10 @@ from transitions.extensions.nesting import NestedState
 
 class ReadyState(NestedState):
     def __init__(self):
-        super().__init__(name='ready', on_exit=self.onExit, on_enter=self.onEnter)
+        super().__init__(name='ready', on_enter=self.onEnter, on_exit=self.onExit)
     
-    def onExit(self):
+    def onEnter(self):
         pass
 
-    def onEnter(self):
+    def onExit(self):
         pass
