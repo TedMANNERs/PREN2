@@ -8,7 +8,7 @@ use "-O" argument to run the program in release mode (Removes asserts and __debu
 import signal
 import sys
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(filename='logs/horwlog.log', filemode='w', format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
 from mission_control import MissionControl
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from communication.usb import Usb

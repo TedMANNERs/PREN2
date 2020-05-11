@@ -19,6 +19,7 @@ and open the template in the editor.
         </div>
         <div id="div2">
             <h1>Logs</h1>
+            <div id="output"></div>
         </div>
         <div id="div3">
             <h1>State Machine</h1>
@@ -28,4 +29,16 @@ and open the template in the editor.
             <h1>Prediction Navigation</h1>
         </div>
     </body>
+    <script>
+        var output = document.getElementById('output');
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', "{{ url_for('stream_logs') }}");
+        xhr.send();
+    
+        setInterval(function() {
+            output.textContent = xhr.responseText;
+            console.log(xhr.responseText);
+        }, 1000);
+    </script>
 </html>

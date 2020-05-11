@@ -4,7 +4,8 @@ import os
 import cv2
 import logging
 import threading
-from flask import Flask, render_template, Response, request
+from time import sleep
+from flask import Flask, render_template, Response, request, stream_with_context
 from mission_control import MissionControl
 
 class Webserver:
@@ -13,6 +14,7 @@ class Webserver:
         self.app = Flask(__name__)
         self.app.add_url_rule("/", "index", self.index)
         self.app.add_url_rule("/video_feed", "video_feed", self.video_feed)
+        self.app.add_url_rule("/stream_logs", "stream_logs", self.video_feed)
         self.__thread = threading.Thread(target=self._run, daemon=True)
         
     def index(self):
@@ -22,6 +24,15 @@ class Webserver:
     def video_feed(self):
         """Video streaming route. Put this in the src attribute of an img tag."""
         return Response(self._create_stream_generator(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+    def stream_logs(self):
+        def generate():
+            with open('../logs/horwlog.log') as f:
+                while True:
+                    yield f.read()
+                    sleep(1)
+
+        return Response(stream_with_context(generate())) 
 
     def start(self):
         logging.info("Starting webserver")
