@@ -5,9 +5,9 @@ from communication.lowLevelController import LowLevelController, CommandType, Co
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.debugInfo import DebugInfo
-from camera.camera_factory import CameraFactory
 from debugGui.webserver import Webserver
 from horwbot_state_machine import HorwbotStateMachine
+from camera.camera_provider import CameraProvider
 
 class MissionControl(Subscriber):
     def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector, state_machine: HorwbotStateMachine):
@@ -25,7 +25,7 @@ class MissionControl(Subscriber):
         self.lowLevelController.sendLED(LEDCommand.On)
 
     def search(self):
-        frame = self.camera.getFrame()
+        frame = CameraProvider.getCamera()
         detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
         detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
         DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)

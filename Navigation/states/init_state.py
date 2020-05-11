@@ -3,6 +3,7 @@ from communication.lowLevelController import LowLevelController
 from imageDetection.pylonDetector import PylonDetector
 from communication.usb import Usb
 from debugGui.webserver import Webserver
+from camera.camera_provider import CameraProvider
 
 class InitState(NestedState):
     def __init__(self, lowLevelController: LowLevelController, pylonDetector: PylonDetector):
@@ -12,7 +13,7 @@ class InitState(NestedState):
 
     def onExit(self):
         # Init camera
-        self.camera = CameraFactory.create()
+        CameraProvider.initialize()
         # Init YOLO
         self.pylonDetector.initialize()
         # Start listening for commands from the LLC
