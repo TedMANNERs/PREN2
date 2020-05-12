@@ -7,7 +7,8 @@ from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
 from debugGui.debugInfo import DebugInfo
-from communication.lowLevelController import LowLevelController
+from communication.lowLevelController import LowLevelController, CommandType, Command
+from communication.subscriber import Subscriber
 from states.init_state import InitState
 from states.ready_state import ReadyState
 from states.aborted_state import AbortedState
@@ -15,7 +16,7 @@ from states.running_state import RunningState
 from states.error_state import ErrorState
 
 #TODO: Replace strings with constants
-class HorwbotStateMachine(HierarchicalGraphMachine):
+class HorwbotStateMachine(HierarchicalGraphMachine, Subscriber):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
         states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
         transitions = [
@@ -42,3 +43,17 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
         DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if __debug__:
             DebugInfo.showStateDiagram()
+
+    # Is called when new data from the LLC is received.
+    def onCommandReceived(self, command: Command):
+        logging.debug("HorwbotStateMachine: Received command = %s", command)
+        if command.commandType == CommandType.Start:
+            self.start()
+        elif command.commandType == CommandType.SendSensorData:
+            logging.info(command.data)
+            #TODO: Implement handling of sensor data
+            pass
+        elif command.commandType == CommandType.Stop:
+            self.stop()
+        else:
+            raise ValueError("A command of type '{0}' should never be received!".format(command.commandType))

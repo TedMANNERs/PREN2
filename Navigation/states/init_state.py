@@ -18,7 +18,7 @@ class InitState(NestedState):
         self.pylonDetector.initialize()
         # Start listening for commands from the LLC
         self.lowLevelController.startListening()
-        self.lowLevelController.subscribe(self)
+        self.lowLevelController.subscribe(event.machine)
         if Usb.hasWifiDongle():
             self.webserver = Webserver()
             self.webserver.start()

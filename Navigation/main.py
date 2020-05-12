@@ -10,7 +10,6 @@ import sys
 import logging
 from communication.lowLevelController import AudioCommand, LEDCommand
 from horwbot_state_machine import HorwbotStateMachine
-from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from communication.lowLevelController import LowLevelController
@@ -21,14 +20,13 @@ def main():
 
     def abort(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
-        mission_control.abort()
+        state_machine.abort()
         sys.exit(0)
     
     try:
         logging.info("Start Navigation Software")
         llc = LowLevelController()
         state_machine = HorwbotStateMachine(llc, PylonDetector(), Navigator())
-        mission_control = MissionControl(state_machine)
         signal.signal(signal.SIGINT, abort) #intercept abort signal (e.g. Ctrl+C)
         logging.info("State = %s", state_machine.state)
         state_machine.initialize()
@@ -41,19 +39,19 @@ def main():
         if value == "q":
             break
         try:
-            handle_command(value, mission_control, llc)
+            handle_command(value, state_machine, llc)
         except Exception as e:
             logging.error(e)
             state_machine.fail(e)
         
-    mission_control.abort()
+    state_machine.abort()
 
 
-def handle_command(command, mission_control: MissionControl, llc: LowLevelController):
+def handle_command(command, state_machine: HorwbotStateMachine, llc: LowLevelController):
     if command == "1":
-        mission_control.start()
+        state_machine.start()
     elif command == "2":
-        mission_control.stop()
+        state_machine.stop()
     elif command.startswith("3"):
         if command.endswith("1"):
             llc.sendPlayAudio(AudioCommand.ShortBeep)
