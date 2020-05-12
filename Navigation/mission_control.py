@@ -1,87 +1,52 @@
 import cv2
-import serial
+import numpy as np
 import logging
-from communication.subscriber import Subscriber
-from communication.lowLevelController import LowLevelController, CommandType, Command
+from transitions.extensions.nesting import NestedState
+from transitions.extensions import HierarchicalGraphMachine
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
+from debugGui.webserver import Webserver
 from debugGui.debugInfo import DebugInfo
-from camera.camera_factory import CameraFactory
+from communication.lowLevelController import LowLevelController, CommandType, Command
+from communication.subscriber import Subscriber
+from states.init_state import InitState
+from states.ready_state import ReadyState
+from states.aborted_state import AbortedState
+from states.running_state import RunningState
+from states.error_state import ErrorState
 
-class MissionControl(Subscriber):
-    def __init__(self, lowLevelController: LowLevelController, navigator: Navigator, pylonDetector: PylonDetector):
-        self.lowLevelController = lowLevelController
-        self.navigator = navigator
-        self.pylonDetector = pylonDetector
+#TODO: Replace strings with constants
+class MissionControl(HierarchicalGraphMachine, Subscriber):
+    def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
+        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
+        transitions = [
+            { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
+            { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},
+            { 'trigger': 'moveToPylon', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
+            { 'trigger': 'reverse', 'source': 'running_searching', 'dest': 'running_reversing'},
+            { 'trigger': 'cross', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
+            { 'trigger': 'abort', 'source': ['ready', 'running', 'error'], 'dest': 'aborted'},
+            { 'trigger': 'stop', 'source': 'running', 'dest': 'ready'},
+            { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergency'},
+            { 'trigger': 'search', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergency'], 'dest': 'running_searching'},
+            { 'trigger': 'endParcours', 'source': 'running_searching', 'dest': 'running_parcoursCompleted'},
+            { 'trigger': 'recoverReady', 'source': 'error', 'dest': 'ready'},
+            { 'trigger': 'recoverRunning', 'source': 'error', 'dest': 'running'},
+            { 'trigger': 'fail', 'source': ['init', 'ready', 'running'], 'dest': 'error'}
+        ]
+        super().__init__(model=self, states=states, transitions=transitions, initial='init', before_state_change='update_state_diagram', after_state_change='update_state_diagram', send_event=True, queued=True)
 
-        # Init camera
-        self.camera = CameraFactory.create()
-
-        # Start listening for commands from the LLC
-        self.lowLevelController.startListening()
-        self.lowLevelController.subscribe(self)
-
-        #TODO: Replace booleans with state machine
-        self.isMissionSuccessful = False #TODO: change to false when code is ready
-        self.isMissionCancelled = False
-        self.isMissionRunning = False
-
-        # Debug-Info
-        self.latestFrame = None
-
-    def start(self):
-        if self.isMissionRunning:
-            logging.info("Mission is already running")
-            return
-            
-        logging.info("Starting Mission Control")
-        #selfTest.run()
-        self.isMissionCancelled = False
-        self.isMissionRunning = True
-        self.__runMission()
-
-    def __runMission(self):
-        logging.info("Mission is running")
-        while not self.isMissionSuccessful:
-            if self.isMissionCancelled:
-                logging.info("Mission was cancelled!")
-                self.isMissionRunning = False
-                return
-            
-            frame = self.camera.getFrame()
-            detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
-            if detectedPylons:
-                detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
-                logging.info(detectedPylons)
-            
-            self.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
-            if __debug__:
-                cv2.imshow("Horwbot Image Detection", self.latestFrame)
-                cv2.waitKey(1)
-            
-            targetVector = self.navigator.getNextTargetVector(detectedPylons, frame_resized)
-            #logging.info(targetVector)
-            try:
-                self.lowLevelController.sendTargetVector(targetVector)
-            except serial.SerialTimeoutException as serialError:
-                print(serialError)
-                self.stop()
-
-            #self.isMissionSuccessful = True # Remove to loop
-
-        logging.info("Mission was successful!")
-
-    def getDebugInfo(self):
-        return DebugInfo(self.latestFrame)
-
-    def stop(self):
-        logging.info("Stopping Mission Control")
-        self.isMissionCancelled = True
+    def update_state_diagram(self, event):
+        graph = self.model.get_graph()
+        buffer = graph.pipe(format='png')
+        nparr = np.fromstring(buffer, np.uint8)
+        DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if __debug__:
+            DebugInfo.showStateDiagram()
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):
-        #print("MissionControl: Received command = {0}".format(command))
-        logging.info("MissionControl: Received command = %s", command)
+        logging.debug("MissionControl: Received command = %s", command)
         if command.commandType == CommandType.Start:
             self.start()
         elif command.commandType == CommandType.SendSensorData:

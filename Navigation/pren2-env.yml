@@ -13,3 +13,6 @@ dependencies:
   - rope
   - opencv
   - scikit-image
+  - transitions
+  - graphviz
+  - python-graphviz

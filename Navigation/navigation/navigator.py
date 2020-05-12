@@ -11,19 +11,27 @@ class Navigator:
         self._targetVector = self.VECTOR_STRAIGHT
         pass
         
-    def getNextTargetVector(self, detectedPylons, frame):
+    def getNextPylon(self, detectedPylons):
         """
         Format of parameter 'detectedPylons':
         [('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)]
         The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
         """
-        standingPylons = list(filter(lambda x: x[0].decode("utf-8") == "pylon", detectedPylons))
-        if standingPylons:
-            index = np.argmax([x[2][0] for x in standingPylons])
-            rightmost_nearest_pylon = standingPylons[index]
-            print("Rightmost Nearest Pylon = {0}, Index = {1}".format(rightmost_nearest_pylon, index))
+        index = np.argmax([x[2][0] for x in detectedPylons])
+        rightmost_nearest_pylon = detectedPylons[index]
+        logging.debug("Rightmost Nearest Pylon = {0}, Index = {1}".format(rightmost_nearest_pylon, index))
+        return rightmost_nearest_pylon
+
+    def getNextTargetVector(self, nextPylon, frame):
+        """
+        Format of parameter 'nextPylon':
+        ('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)
+        The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
+        """
+        
+        if nextPylon:
             frame_width = frame.shape[0]
-            if rightmost_nearest_pylon[2][0] < (frame_width / 4): # check if the rightmost nearest pylon is in the left quarter of the frame
+            if nextPylon[2][0] < (frame_width / 4): # check if the next target pylon is in the left quarter of the frame
                 self._targetVector = self.VECTOR_STRAIGHT
                 logging.info("STRAIGHT")
             else:

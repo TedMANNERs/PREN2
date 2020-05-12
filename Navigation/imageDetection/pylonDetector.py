@@ -19,7 +19,6 @@ class PylonDetector():
     PYLON_REAL_HEIGHT_MM = int(parser.get("variables", "PYLON_REAL_HEIGHT_MM"))
 
     def __init__(self):
-        global metaMain, netMain
         if not os.path.exists(self.CONFIG_PATH):
             raise ValueError("Invalid config path `{0}`".format(os.path.abspath(self.CONFIG_PATH)))
         if not os.path.exists(self.WEIGHT_PATH):
@@ -27,6 +26,8 @@ class PylonDetector():
         if not os.path.exists(self.META_PATH):
             raise ValueError("Invalid data file path `{0}`".format(os.path.abspath(self.META_PATH)))
 
+    def initialize(self):
+        global metaMain, netMain
         if netMain is None:
             netMain = darknet.load_net_custom(self.CONFIG_PATH.encode("ascii"), self.WEIGHT_PATH.encode("ascii"), 0, 1)  # batch size = 1
         if metaMain is None:

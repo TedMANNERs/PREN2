@@ -6,11 +6,10 @@ import logging
 import threading
 from time import sleep
 from flask import Flask, render_template, Response, request, stream_with_context
-from mission_control import MissionControl
+from debugGui.debugInfo import DebugInfo
 
 class Webserver:
-    def __init__(self, mission_control: MissionControl):
-        self.mission_control = mission_control
+    def __init__(self):
         self.app = Flask(__name__)
         self.app.add_url_rule("/", "index", self.index)
         self.app.add_url_rule("/video_feed", "video_feed", self.video_feed)
@@ -44,7 +43,7 @@ class Webserver:
     def _create_stream_generator(self):
         """Video streaming generator function."""
         while True:
-            debugInfo = self.mission_control.getDebugInfo() # TODO: Implement update mechanism for all debug info -> update data from client (javscript with ajax)?
+            debugInfo = DebugInfo.getLatest() # TODO: Implement update mechanism for all debug info -> update data from client (javscript with ajax)?
             if debugInfo.latestFrame is None:
                 continue
             yield (b'--frame\r\n'

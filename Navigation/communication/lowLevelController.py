@@ -5,7 +5,6 @@ import logging
 import numpy as np
 from enum import Enum
 from time import sleep
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from configreader import parser
 
 class CommandType(Enum):
@@ -49,43 +48,36 @@ class LowLevelController:
     def startListening(self):
         self._isListening = True
         self._listenerThread.start()
+        #TODO: Loop and wait for serial port to open?
         logging.info("Listener thread started")
 
     def stopListening(self):
         self._isListening = False
+        #TODO: Loop and wait for serial port to close?
 
     def sendTargetVector(self, targetVector):
         #logging.info("SendTargetVector: [%s, %s]", targetVector.speed, targetVector.angle)
-        #self.serialPort.open()
         command = CommandType.SendTargetVector.value.tobytes()
         command += targetVector.speed.newbyteorder(self.BIG_ENDIAN).tobytes()
         command += targetVector.angle.newbyteorder(self.BIG_ENDIAN).tobytes()
         self.serialPort.write(command)
-        #self.serialPort.close()
 
     def sendPlayAudio(self, audioCommand: AudioCommand):
-        #print("SendPlayAudio: {0}".format(audioCommand))
         logging.info("SendPlayAudio: %s", audioCommand)
-        #self.serialPort.open()
         command = CommandType.PlayAudio.value.tobytes()
         command += audioCommand.value.tobytes()
         self.serialPort.write(command)
-        #self.serialPort.close()
 
     def sendStop(self):
         logging.info("SendStop")
-        #self.serialPort.open()
         command = CommandType.Stop.value.tobytes()
         self.serialPort.write(command)
-        #self.serialPort.close()
 
     def sendLED(self, ledCommand: LEDCommand):
-        logging.info("SendLED")
-        #self.serialPort.open()
+        logging.info("SendLED: %s", ledCommand)
         command = CommandType.Led.value.tobytes()
         command += ledCommand.value.tobytes()
         self.serialPort.write(command)
-        #self.serialPort.close()
 
     def subscribe(self, subscriber):
         subscriber._publisher = self
@@ -105,8 +97,7 @@ class LowLevelController:
             try:
                 commandType = CommandType(np.fromstring(commandTypeData, dtype=">i1"))
             except ValueError:
-                #print("'{0}' is not a valid CommandType".format(commandTypeData))
-                logging.warning("%s is not a valid CommandType", commandTypeData)
+                logging.error("%s is not a valid CommandType", commandTypeData)
                 continue
             if commandType == CommandType.Start:
                 logging.info("Start received")
