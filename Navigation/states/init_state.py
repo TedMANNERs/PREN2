@@ -11,7 +11,7 @@ class InitState(NestedState):
         self.pylonDetector = pylonDetector
         super().__init__(name='init', on_exit=self.onExit)
 
-    def onExit(self):
+    def onExit(self, event):
         # Init camera
         CameraProvider.initialize()
         # Init YOLO

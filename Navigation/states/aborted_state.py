@@ -6,7 +6,7 @@ class AbortedState(NestedState):
         self.lowLevelController = lowLevelController
         super().__init__(name='aborted', on_enter=self.onEnter)
 
-    def onEnter(self):
+    def onEnter(self, event):
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)

@@ -5,11 +5,11 @@ class MovingToPylonState(NestedState):
         self.parent = parent
         super().__init__(name='movingToPylon', on_enter=self.onEnter, on_exit=self.onExit)
     
-    def onEnter(self):
+    def onEnter(self, event):
         self.parent.substate = self
 
     def loop(self):
         pass
 
-    def onExit(self):
+    def onExit(self, event):
         pass

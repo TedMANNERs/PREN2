@@ -14,6 +14,7 @@ from states.aborted_state import AbortedState
 from states.running_state import RunningState
 from states.error_state import ErrorState
 
+#TODO: Replace strings with constants
 class HorwbotStateMachine(HierarchicalGraphMachine):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
         states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
@@ -23,18 +24,18 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
             { 'trigger': 'moveToPylon', 'source': 'running_searching', 'dest': 'running_movingToPylon'},
             { 'trigger': 'reverse', 'source': 'running_searching', 'dest': 'running_reversing'},
             { 'trigger': 'cross', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
-            { 'trigger': 'abort', 'source': ['ready', 'running'], 'dest': 'aborted'},
+            { 'trigger': 'abort', 'source': ['ready', 'running', 'error'], 'dest': 'aborted'},
             { 'trigger': 'stop', 'source': 'running', 'dest': 'ready'},
             { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergency'},
             { 'trigger': 'search', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergency'], 'dest': 'running_searching'},
-            { 'trigger': 'search', 'source': 'running_searching', 'dest': '='},
             { 'trigger': 'endParcours', 'source': 'running_searching', 'dest': 'running_parcoursCompleted'},
-            { 'trigger': 'recover', 'source': 'error', 'dest': 'ready'},
-            { 'trigger': 'fail', 'source': '*', 'dest': 'error'}
+            { 'trigger': 'recoverReady', 'source': 'error', 'dest': 'ready'},
+            { 'trigger': 'recoverRunning', 'source': 'error', 'dest': 'running'},
+            { 'trigger': 'fail', 'source': ['init', 'ready', 'running'], 'dest': 'error'}
         ]
-        super().__init__(model=self, states=states, transitions=transitions, initial='init', after_state_change='on_state_changed')
+        super().__init__(model=self, states=states, transitions=transitions, initial='init', before_state_change='update_state_diagram', after_state_change='update_state_diagram', send_event=True, queued=True)
 
-    def on_state_changed(self):
+    def update_state_diagram(self, event):
         graph = self.model.get_graph()
         buffer = graph.pipe(format='png')
         nparr = np.fromstring(buffer, np.uint8)

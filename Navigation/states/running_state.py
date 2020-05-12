@@ -29,7 +29,7 @@ class RunningState(NestedState):
                     ParcoursCompletedState(self)
                 ])
 
-    def onEnter(self):
+    def onEnter(self, event):
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendLED(LEDCommand.On)
@@ -37,7 +37,7 @@ class RunningState(NestedState):
         self._loopThread = threading.Thread(target=self._loop)
         self._loopThread.start()
 
-    def onExit(self):
+    def onExit(self, event):
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
         self.lowLevelController.sendLED(LEDCommand.Off)
