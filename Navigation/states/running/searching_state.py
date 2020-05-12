@@ -30,7 +30,7 @@ class SearchingState(NestedState):
         if detectedPylons:
             logging.debug(detectedPylons)
             self.nextPylon = self.navigator.getNextPylon(detectedPylons)
-            self.parent.state_machine.moveToPylon()
+            self.parent.mission_control.moveToPylon()
 
         targetVector = self.navigator.getNextTargetVector(self.nextPylon, frame_resized)
         #logging.debug(targetVector)

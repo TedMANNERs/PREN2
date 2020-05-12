@@ -11,11 +11,11 @@ from states.running.emergency_state import EmergencyState
 from states.running.parcoursCompleted_state import ParcoursCompletedState
 
 class RunningState(NestedState):
-    def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator, state_machine):
+    def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator, mission_control):
         self.lowLevelController = llc
         self.pylonDetector = detector
         self.navigator = navigator
-        self.state_machine = state_machine
+        self.mission_control = mission_control
 
         self.substate = None
 
@@ -49,4 +49,4 @@ class RunningState(NestedState):
                 if self.substate:
                     self.substate.loop()
         except Exception as e:
-            self.state_machine.fail(e)
+            self.mission_control.fail(e)

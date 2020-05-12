@@ -16,7 +16,7 @@ from states.running_state import RunningState
 from states.error_state import ErrorState
 
 #TODO: Replace strings with constants
-class HorwbotStateMachine(HierarchicalGraphMachine, Subscriber):
+class MissionControl(HierarchicalGraphMachine, Subscriber):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
         states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
         transitions = [
@@ -46,7 +46,7 @@ class HorwbotStateMachine(HierarchicalGraphMachine, Subscriber):
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):
-        logging.debug("HorwbotStateMachine: Received command = %s", command)
+        logging.debug("MissionControl: Received command = %s", command)
         if command.commandType == CommandType.Start:
             self.start()
         elif command.commandType == CommandType.SendSensorData:

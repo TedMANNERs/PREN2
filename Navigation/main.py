@@ -9,7 +9,7 @@ import signal
 import sys
 import logging
 from communication.lowLevelController import AudioCommand, LEDCommand
-from horwbot_state_machine import HorwbotStateMachine
+from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from communication.lowLevelController import LowLevelController
@@ -20,38 +20,36 @@ def main():
 
     def abort(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
-        state_machine.abort()
+        mission_control.abort()
         sys.exit(0)
     
     try:
         logging.info("Start Navigation Software")
         llc = LowLevelController()
-        state_machine = HorwbotStateMachine(llc, PylonDetector(), Navigator())
+        mission_control = MissionControl(llc, PylonDetector(), Navigator())
         signal.signal(signal.SIGINT, abort) #intercept abort signal (e.g. Ctrl+C)
-        logging.info("State = %s", state_machine.state)
-        state_machine.initialize()
+        logging.info("State = %s", mission_control.state)
+        mission_control.initialize()
     except Exception as e:
-        logging.error(e)
-        state_machine.fail(e)
+        mission_control.fail(e)
     
     while True:
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
         if value == "q":
             break
         try:
-            handle_command(value, state_machine, llc)
+            handle_command(value, mission_control, llc)
         except Exception as e:
-            logging.error(e)
-            state_machine.fail(e)
+            mission_control.fail(e)
         
-    state_machine.abort()
+    mission_control.abort()
 
 
-def handle_command(command, state_machine: HorwbotStateMachine, llc: LowLevelController):
+def handle_command(command, mission_control: MissionControl, llc: LowLevelController):
     if command == "1":
-        state_machine.start()
+        mission_control.start()
     elif command == "2":
-        state_machine.stop()
+        mission_control.stop()
     elif command.startswith("3"):
         if command.endswith("1"):
             llc.sendPlayAudio(AudioCommand.ShortBeep)

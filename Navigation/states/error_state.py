@@ -9,12 +9,12 @@ class ErrorState(NestedState):
         super().__init__(name='error', on_enter=self.onEnter, on_exit=self.onExit)
 
     def onEnter(self, event):
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         error = event.args[0]
         logging.error(error)
+        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
+        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
+        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
+        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         if isinstance(error, MachineError):
             if event.source_name == 'ready':
                 event.machine.recoverReady()
