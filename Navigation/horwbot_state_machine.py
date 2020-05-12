@@ -25,10 +25,10 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
             { 'trigger': 'cross', 'source': 'running_searching', 'dest': 'running_crossingObstacle'},
             { 'trigger': 'abort', 'source': ['ready', 'running'], 'dest': 'aborted'},
             { 'trigger': 'stop', 'source': 'running', 'dest': 'ready'},
-            { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergencyMode'},
-            { 'trigger': 'search', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergencyMode'], 'dest': 'running_searching'},
+            { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergency'},
+            { 'trigger': 'search', 'source': ['running_movingToPylon', 'running_reversing', 'running_crossingObstacle', 'running_emergency'], 'dest': 'running_searching'},
             { 'trigger': 'search', 'source': 'running_searching', 'dest': '='},
-            { 'trigger': 'endParcour', 'source': 'running_searching', 'dest': 'running_parcourCompleted'},
+            { 'trigger': 'endParcours', 'source': 'running_searching', 'dest': 'running_parcoursCompleted'},
             { 'trigger': 'recover', 'source': 'error', 'dest': 'ready'},
             { 'trigger': 'fail', 'source': '*', 'dest': 'error'}
         ]
@@ -41,21 +41,3 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
         DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if __debug__:
             DebugInfo.showStateDiagram()
-
-    def execute_moveForward(self): pass
-       
-    def execute_moveBackward(self): pass
-    
-    def execute_crossing(self): pass
-        
-    def execute_goToEmergency(self): pass
-    
-    def execute_backToSearch(self): pass
-
-    def execute_stayInSearch(self): pass
-
-    def execute_endParcour(self): pass
-
-    def execute_errorHandling(self): pass
-
-    def execute_goToError(self): pass

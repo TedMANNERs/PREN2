@@ -8,7 +8,7 @@ from debugGui.debugInfo import DebugInfo
 from camera.camera_provider import CameraProvider
 
 class SearchingState(NestedState):
-    def __init__(self, lowLevelController: LowLevelController, pylonDetector: PylonDetector, navigator: Navigator, parent):
+    def __init__(self, parent, lowLevelController: LowLevelController, pylonDetector: PylonDetector, navigator: Navigator):
         self.lowLevelController = lowLevelController
         self.pylonDetector = pylonDetector
         self.navigator = navigator
@@ -30,7 +30,7 @@ class SearchingState(NestedState):
         if detectedPylons:
             logging.debug(detectedPylons)
             self.nextPylon = self.navigator.getNextPylon(detectedPylons)
-            #self.state_machine.moveToPylon() #TODO: Figure out how to call the transition trigger
+            self.parent.state_machine.moveToPylon()
 
         targetVector = self.navigator.getNextTargetVector(self.nextPylon, frame_resized)
         #logging.debug(targetVector)

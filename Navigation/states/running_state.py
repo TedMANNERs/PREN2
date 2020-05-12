@@ -4,21 +4,29 @@ from communication.lowLevelController import LowLevelController, AudioCommand, L
 from imageDetection.pylonDetector import PylonDetector
 from navigation.navigator import Navigator
 from states.running.searching_state import SearchingState
+from states.running.movingToPylon_state import MovingToPylonState
+from states.running.reversing_state import ReversingState
+from states.running.crossingObstacle_state import CrossingObstacleState
+from states.running.emergency_state import EmergencyState
+from states.running.parcoursCompleted_state import ParcoursCompletedState
 
 class RunningState(NestedState):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator, state_machine):
         self.lowLevelController = llc
         self.pylonDetector = detector
         self.navigator = navigator
+        self.state_machine = state_machine
+
         self.substate = None
+
         super().__init__(name='running', on_enter=self.onEnter, on_exit=self.onExit, initial='searching')
         self.add_substates([
-                    SearchingState(llc, detector, navigator, self),
-                    NestedState(name='movingToPylon'),
-                    NestedState(name='reversing'),
-                    NestedState(name='crossingObstacle'),
-                    NestedState(name='emergencyMode'),
-                    NestedState(name='parcourCompleted')
+                    SearchingState(self, llc, detector, navigator),
+                    MovingToPylonState(self),
+                    ReversingState(self),
+                    CrossingObstacleState(self),
+                    EmergencyState(self),
+                    ParcoursCompletedState(self)
                 ])
 
     def onEnter(self):
