@@ -1,3 +1,4 @@
+import logging
 from transitions.extensions.nesting import NestedState
 from transitions import MachineError
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
@@ -13,6 +14,7 @@ class ErrorState(NestedState):
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         error = event.args[0]
+        logging.error(error)
         if isinstance(error, MachineError):
             if event.source_name == 'ready':
                 event.machine.recoverReady()
@@ -20,6 +22,8 @@ class ErrorState(NestedState):
                 event.machine.recoverRunning()
             else:
                 event.machine.abort()
+        else:
+            event.machine.recoverReady()
 
     def onExit(self, event):
         pass

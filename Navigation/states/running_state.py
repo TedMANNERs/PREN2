@@ -44,6 +44,9 @@ class RunningState(NestedState):
         self._isRunning = False
 
     def _loop(self):
-        while (self._isRunning):
-            if self.substate:
-                self.substate.loop()
+        try:
+            while (self._isRunning):
+                if self.substate:
+                    self.substate.loop()
+        except Exception as e:
+            self.state_machine.fail(e)
