@@ -28,7 +28,7 @@ def main():
     state_machine = HorwbotStateMachine(LowLevelController(), PylonDetector(), Navigator())
     mission_control = MissionControl(state_machine)
     signal.signal(signal.SIGINT, abort) #intercept abort signal (e.g. Ctrl+C)
-    logging.info("State = %s", state_machine.states)
+    logging.info("State = %s", state_machine.state)
     state_machine.initialize()
     
     while True:

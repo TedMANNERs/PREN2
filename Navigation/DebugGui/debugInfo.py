@@ -13,10 +13,15 @@ class DebugInfo:
         return DebugInfo(DebugInfo.latestFrame, DebugInfo.stateDiagram)
 
     @staticmethod
-    def showDebugWindows():
-        cv2.imshow("Horwbot Image Detection", DebugInfo.latestFrame)
-        cv2.waitKey(1)
-        cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("Horwbot State Machine", 1400, 400)
-        cv2.imshow("Horwbot State Machine", DebugInfo.stateDiagram)
-        cv2.waitKey(1)
+    def showLatestFrame():
+        if DebugInfo.latestFrame is not None:
+            cv2.imshow("Horwbot Image Detection", DebugInfo.latestFrame)
+            cv2.waitKey(1)
+            
+    @staticmethod
+    def showStateDiagram():
+        if DebugInfo.stateDiagram is not None:
+            cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("Horwbot State Machine", 1400, 400)
+            cv2.imshow("Horwbot State Machine", DebugInfo.stateDiagram)
+            cv2.waitKey(1)

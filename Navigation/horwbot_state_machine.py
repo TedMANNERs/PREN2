@@ -16,7 +16,7 @@ from states.error_state import ErrorState
 
 class HorwbotStateMachine(HierarchicalGraphMachine):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
-        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator)]
+        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
         transitions = [
             { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
             { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},
@@ -39,6 +39,8 @@ class HorwbotStateMachine(HierarchicalGraphMachine):
         buffer = graph.pipe(format='png')
         nparr = np.fromstring(buffer, np.uint8)
         DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        if __debug__:
+            DebugInfo.showStateDiagram()
 
     def execute_moveForward(self): pass
        
