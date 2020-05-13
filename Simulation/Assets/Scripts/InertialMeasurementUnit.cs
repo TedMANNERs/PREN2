@@ -80,7 +80,7 @@ namespace Assets.Scripts
                 lastAngle.z = Mathf.Abs((transform.rotation.eulerAngles).z);
 
                 timer = 0;
-                Debug.Log($"X={linearAcceleration.x}, Y={linearAcceleration.y}, Z={linearAcceleration.z}, ");
+                //Debug.Log($"X={linearAcceleration.x}, Y={linearAcceleration.y}, Z={linearAcceleration.z}, ");
             }
         }
     }

@@ -168,15 +168,15 @@ namespace Assets.Scripts
         {
             Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}");
             if (angle < 0)
-                _wheelController.TurnLeft();
+                _wheelController.TurnLeft(speed);
             else if (angle > 0)
-                _wheelController.TurnRight();
+                _wheelController.TurnRight(speed);
             else
             {
                 if (speed < 0)
-                    _wheelController.Reverse();
+                    _wheelController.Reverse(speed);
                 else
-                    _wheelController.MoveForward();
+                    _wheelController.MoveForward(speed);
             }
         }
     }
