@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import logging
 from transitions.extensions.nesting import NestedState
-from transitions.extensions import HierarchicalGraphMachine
+from transitions.extensions import LockedHierarchicalGraphMachine
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.webserver import Webserver
@@ -16,7 +16,7 @@ from states.running_state import RunningState
 from states.error_state import ErrorState
 
 #TODO: Replace strings with constants
-class MissionControl(HierarchicalGraphMachine, Subscriber):
+class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
         states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
         transitions = [
