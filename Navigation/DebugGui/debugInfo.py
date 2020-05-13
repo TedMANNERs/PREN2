@@ -22,6 +22,5 @@ class DebugInfo:
     def showStateDiagram():
         if DebugInfo.stateDiagram is not None:
             cv2.namedWindow("Horwbot State Machine", cv2.WINDOW_NORMAL)
-            cv2.resizeWindow("Horwbot State Machine", 1400, 400)
             cv2.imshow("Horwbot State Machine", DebugInfo.stateDiagram)
             cv2.waitKey(1)

@@ -41,8 +41,6 @@ class MissionControl(HierarchicalGraphMachine, Subscriber):
         buffer = graph.pipe(format='png')
         nparr = np.fromstring(buffer, np.uint8)
         DebugInfo.stateDiagram = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if __debug__:
-            DebugInfo.showStateDiagram()
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):

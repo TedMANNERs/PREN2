@@ -23,9 +23,6 @@ class SearchingState(NestedState):
         detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
         detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
         DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
-
-        if __debug__:
-            DebugInfo.showLatestFrame()
         
         if detectedPylons:
             logging.debug(detectedPylons)

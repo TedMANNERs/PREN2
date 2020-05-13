@@ -8,21 +8,29 @@ use "-O" argument to run the program in release mode (Removes asserts and __debu
 import signal
 import sys
 import logging
+from threading import Thread
 from communication.lowLevelController import AudioCommand, LEDCommand
 from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from communication.lowLevelController import LowLevelController
+from debugGui.debugInfo import DebugInfo
 
 def main():
     logging.basicConfig(filename='horwlog.log', filemode='w', format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
     logging.getLogger('transitions').setLevel(logging.INFO)
+    _isRunning = True
 
     def abort(sig, frame):
         logging.info("Ctrl + C pressed, terminating...")
         mission_control.abort()
+        _isRunning = False
         sys.exit(0)
     
+    def updateDebugWindows(): 
+        while _isRunning:
+            DebugInfo.showLatestFrame()
+            DebugInfo.showStateDiagram()
     try:
         logging.info("Start Navigation Software")
         llc = LowLevelController()
@@ -33,7 +41,11 @@ def main():
         mission_control.initialize(isSimulation)
     except Exception as e:
         mission_control.fail(e)
-    
+
+    if __debug__:
+        terminalThread = Thread(target=updateDebugWindows)
+        terminalThread.start()
+
     while True:
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
         if value == "q":
@@ -44,7 +56,6 @@ def main():
             mission_control.fail(e)
         
     mission_control.abort()
-
 
 def handle_command(command, mission_control: MissionControl, llc: LowLevelController):
     if command == "1":
