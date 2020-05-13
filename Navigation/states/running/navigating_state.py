@@ -1,21 +1,25 @@
 import logging
+import time
 from transitions.extensions.nesting import NestedState
 from communication.lowLevelController import LowLevelController
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.debugInfo import DebugInfo
 from camera.camera_provider import CameraProvider
+from common.timer import Timer
 
-class SearchingState(NestedState):
+class NavigatingState(NestedState):
     def __init__(self, parent, lowLevelController: LowLevelController, pylonDetector: PylonDetector, navigator: Navigator):
         self.parent = parent
         self.lowLevelController = lowLevelController
         self.pylonDetector = pylonDetector
         self.navigator = navigator
-        super().__init__(name='searching', on_enter=self.onEnter, on_exit=self.onExit)
+        super().__init__(name='navigating', on_enter=self.onEnter, on_exit=self.onExit)
     
     def onEnter(self, event):
         self.parent.substate = self
+        self.timer = Timer()
+        self.timer.start()
 
     def loop(self):
         frame = CameraProvider.getCamera().getFrame()
@@ -24,11 +28,13 @@ class SearchingState(NestedState):
         DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
         
         if detectedPylons:
-            logging.debug(detectedPylons)
-            self.parent.mission_control.navigate()
-        else:
-            targetVector = self.navigator.getSearchTargetVector()
-            self.lowLevelController.sendTargetVector(targetVector)
+            self.timer.reset()
+        elif self.timer.getElapsedTime() > 1:
+            self.timer.stop()
+            self.parent.mission_control.search()
+
+        targetVector = self.navigator.getNavigationTargetVector(detectedPylons, frame_resized)
+        self.lowLevelController.sendTargetVector(targetVector)
 
     def onExit(self, event):
         pass

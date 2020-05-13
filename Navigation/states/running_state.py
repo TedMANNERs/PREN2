@@ -4,7 +4,7 @@ from communication.lowLevelController import LowLevelController, AudioCommand, L
 from imageDetection.pylonDetector import PylonDetector
 from navigation.navigator import Navigator
 from states.running.searching_state import SearchingState
-from states.running.movingToPylon_state import MovingToPylonState
+from states.running.navigating_state import NavigatingState
 from states.running.reversing_state import ReversingState
 from states.running.crossingObstacle_state import CrossingObstacleState
 from states.running.emergency_state import EmergencyState
@@ -22,7 +22,7 @@ class RunningState(NestedState):
         super().__init__(name='running', on_enter=self.onEnter, on_exit=self.onExit, initial='searching')
         self.add_substates([
                     SearchingState(self, llc, detector, navigator),
-                    MovingToPylonState(self),
+                    NavigatingState(self, llc, detector, navigator),
                     ReversingState(self),
                     CrossingObstacleState(self),
                     EmergencyState(self),
