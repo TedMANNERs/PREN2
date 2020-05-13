@@ -26,7 +26,7 @@ class Webserver:
 
     def stream_logs(self):
         def generate():
-            with open('../logs/horwlog.log') as f:
+            with open('../horwlog.log') as f:
                 while True:
                     yield f.read()
                     sleep(1)
