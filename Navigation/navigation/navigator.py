@@ -3,9 +3,6 @@ import logging
 from common.dataTypes import TargetVector
 
 class Navigator:
-    VECTOR_STRAIGHT = TargetVector(np.int16(500),np.int16(0))
-    VECTOR_TURN_LEFT_SLOW = TargetVector(np.int16(250),np.int16(-30))
-    VECTOR_TURN_RIGHT_SLOW = TargetVector(np.int16(250),np.int16(30))
     MAX_SPEED = 500
     SPEED_INCREMENT = 1
     MAX_ANGLE = 60
@@ -32,16 +29,16 @@ class Navigator:
         [('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)]
         The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
         """
-        nextPylon = self.getNextPylon(detectedPylons)
-        if nextPylon:
-            frame_width = frame.shape[0]
-            xPosition = nextPylon[2][0]
-            if xPosition < (frame_width / 4): # check if the next target pylon is in the left quarter of the frame
-                return self._getMoveStraightVector()
-            else:
-                return self._getTurnRightVector()
-        else:
+        if not detectedPylons:
             return self._getTurnLeftVector()
+
+        nextPylon = self.getNextPylon(detectedPylons)
+        frame_width = frame.shape[0]
+        xPosition = nextPylon[2][0]
+        if xPosition < (frame_width / 4): # check if the next target pylon is in the left quarter of the frame
+            return self._getMoveStraightVector()
+        else:
+            return self._getTurnRightVector()
 
     def getSearchTargetVector(self):
         newSpeed = self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
@@ -69,12 +66,20 @@ class Navigator:
         newAngle = self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT)
         return TargetVector(np.int16(newSpeed), np.int16(newAngle))
 
-    def _updateCurrentSpeed(self, value, minValue = 0, maxValue = Navigator.MAX_SPEED):
+    def _updateCurrentSpeed(self, value, minValue = 0, maxValue = None):
+        if maxValue is None:
+            maxValue = self.MAX_SPEED
+
         newSpeed = self._clamp(value, minValue, maxValue)
         self.currentSpeed = newSpeed
         return newSpeed
 
-    def _updateCurrentAngle(self, value, minValue = 0 - Navigator.MAX_ANGLE, maxValue = Navigator.MAX_ANGLE):
+    def _updateCurrentAngle(self, value, minValue = None, maxValue = None):
+        if minValue is None:
+            minValue = 0 - Navigator.MAX_ANGLE
+        if maxValue is None:
+            maxValue = self.MAX_ANGLE
+
         newAngle = self._clamp(value, minValue, maxValue)
         self.currentAngle = newAngle
         return newAngle
