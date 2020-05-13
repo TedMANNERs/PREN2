@@ -71,6 +71,7 @@ namespace Assets.Scripts
             byte[] startBuffer = {(byte) CommandType.Start};
             _serialPort.Write(startBuffer, 0, startBuffer.Length);
             Invoke(nameof(ReleaseVehicle), 3f);
+            InvokeRepeating(nameof(SendSensorData),3f, 0.1f);
         }
 
         // FixedUpdate is called every fixed frame-rate frame
@@ -156,6 +157,11 @@ namespace Assets.Scripts
                     }
                 }
             }
+        }
+
+        private void SendSensorData()
+        {
+            //TODO: Send sensor data
         }
 
         private void TargetVectorReceived(short speed, short angle)

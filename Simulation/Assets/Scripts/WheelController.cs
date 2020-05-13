@@ -19,6 +19,11 @@ public class WheelController : MonoBehaviour
     [SerializeField]
     private int _force = 100;
 
+    public float WheelLeftFrontVelocity =>  _wheelLeftFront.velocity;
+    public float WheelLeftBackVelocity =>  _wheelLeftBack.velocity;
+    public float WheelRightFrontVelocity =>  _wheelRightFront.velocity;
+    public float WheelRightBackVelocity =>  _wheelRightBack.velocity;
+
     // Start is called before the first frame update
     void Start()
     {
