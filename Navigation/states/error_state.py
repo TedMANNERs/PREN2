@@ -10,7 +10,6 @@ class ErrorState(NestedState):
 
     def onEnter(self, event):
         error = event.args[0]
-        logging.error(error)
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)

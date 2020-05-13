@@ -1,4 +1,5 @@
 import threading
+import logging
 from transitions.extensions.nesting import NestedState
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from imageDetection.pylonDetector import PylonDetector
@@ -49,4 +50,5 @@ class RunningState(NestedState):
                 if self.substate:
                     self.substate.loop()
         except Exception as e:
+            logging.error("Substate: %s, %s", self.substate, e)
             self.mission_control.fail(e)

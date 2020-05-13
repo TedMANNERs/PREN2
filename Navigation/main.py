@@ -17,7 +17,15 @@ from communication.lowLevelController import LowLevelController
 from debugGui.debugInfo import DebugInfo
 
 def main():
-    logging.basicConfig(filename='horwlog.log', filemode='w', format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+    logging.basicConfig(
+        format='%(asctime)s {%(module)s:%(lineno)d} %(levelname)-8s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        level=logging.DEBUG,
+        handlers=[
+            logging.FileHandler("horwlog.log",mode='a'),
+            logging.StreamHandler()
+        ]
+    )
     logging.getLogger('transitions').setLevel(logging.INFO)
     _isRunning = True
 
@@ -40,6 +48,7 @@ def main():
         isSimulation = len(sys.argv) >= 2 and sys.argv[1] == "simulation"
         mission_control.initialize(isSimulation)
     except Exception as e:
+        logging.error(e)
         mission_control.fail(e)
 
     if __debug__:
@@ -53,6 +62,7 @@ def main():
         try:
             handle_command(value, mission_control, llc)
         except Exception as e:
+            logging.error(e)
             mission_control.fail(e)
         
     mission_control.abort()
