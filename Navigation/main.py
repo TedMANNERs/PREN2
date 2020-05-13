@@ -15,7 +15,7 @@ from imageDetection.pylonDetector import PylonDetector
 from communication.lowLevelController import LowLevelController
 
 def main():
-    logging.basicConfig(filename='logs/horwlog.log', filemode='w', format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+    logging.basicConfig(filename='horwlog.log', filemode='w', format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
     logging.getLogger('transitions').setLevel(logging.INFO)
 
     def abort(sig, frame):
@@ -29,7 +29,8 @@ def main():
         mission_control = MissionControl(llc, PylonDetector(), Navigator())
         signal.signal(signal.SIGINT, abort) #intercept abort signal (e.g. Ctrl+C)
         logging.info("State = %s", mission_control.state)
-        mission_control.initialize()
+        isSimulation = len(sys.argv) >= 2 and sys.argv[1] == "simulation"
+        mission_control.initialize(isSimulation)
     except Exception as e:
         mission_control.fail(e)
     

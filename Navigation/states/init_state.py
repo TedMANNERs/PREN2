@@ -12,8 +12,9 @@ class InitState(NestedState):
         super().__init__(name='init', on_exit=self.onExit)
 
     def onExit(self, event):
+        isSimulation = event.args[0]
         # Init camera
-        CameraProvider.initialize()
+        CameraProvider.initialize(isSimulation)
         # Init YOLO
         self.pylonDetector.initialize()
         # Start listening for commands from the LLC

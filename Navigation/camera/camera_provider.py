@@ -10,16 +10,16 @@ class CameraProvider:
     _camera = None
 
     @staticmethod
-    def initialize():
-        if len(sys.argv) >= 2 and sys.argv[1] == "simulation":
+    def initialize(isSimulation: bool):
+        if isSimulation:
             CameraProvider._camera = CameraSimulation()
-
-        cap = cv2.VideoCapture(0) # Use default camera (picamera on jetson, webcam on other devices)
-        if cap is None or not cap.isOpened():
-            logging.warning("Warning: Default camera was not found or could not be opened. Continuing with static image...")
-            CameraProvider._camera = CameraFake()
         else:
-            CameraProvider._camera = Camera(cap)
+            cap = cv2.VideoCapture(0) # Use default camera (picamera on jetson, webcam on other devices)
+            if cap is None or not cap.isOpened():
+                logging.warning("Warning: Default camera was not found or could not be opened. Continuing with static image...")
+                CameraProvider._camera = CameraFake()
+            else:
+                CameraProvider._camera = Camera(cap)
     
     @staticmethod
     def getCamera():
