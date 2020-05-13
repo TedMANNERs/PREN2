@@ -87,8 +87,20 @@ namespace Assets.Scripts
 
         void OnDestroy()
         {
-            _listenerTokenSource.Cancel();
-            _serialPort.Close();
+            try
+            {
+                byte[] stopBuffer = {(byte) CommandType.Stop};
+                _serialPort.Write(stopBuffer, 0, stopBuffer.Length);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            finally
+            {
+                _listenerTokenSource.Cancel();
+                _serialPort.Close();
+            }
         }
 
         void ReleaseVehicle()
