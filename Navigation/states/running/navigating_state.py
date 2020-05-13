@@ -29,11 +29,12 @@ class NavigatingState(NestedState):
         
         if detectedPylons:
             self.timer.reset()
-        elif self.timer.getElapsedTime() > 1:
+        elif self.timer.getElapsedTime() > 2:
             self.timer.stop()
             self.parent.mission_control.search()
+            return
 
-        targetVector = self.navigator.getNavigationTargetVector(detectedPylons, frame_resized)
+        targetVector = self.navigator.getNavigationTargetVector(detectedPylons, frame_resized, self.timer)
         self.lowLevelController.sendTargetVector(targetVector)
 
     def onExit(self, event):
