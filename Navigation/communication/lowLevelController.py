@@ -31,6 +31,11 @@ class Command:
     def __str__(self):
         return "{0} - {1}".format(self.commandType, self.data)
 
+class LowLevelControllerException(Exception):
+    """Raised when communication errors occur"""
+    def __init__(self, error):
+        super().__init__(error)
+
 #TODO: Refactor class, remove duplicate code
 class LowLevelController:
     BIG_ENDIAN = ">"
@@ -60,24 +65,36 @@ class LowLevelController:
         command = CommandType.SendTargetVector.value.tobytes()
         command += targetVector.speed.newbyteorder(self.BIG_ENDIAN).tobytes()
         command += targetVector.angle.newbyteorder(self.BIG_ENDIAN).tobytes()
-        self.serialPort.write(command)
+        try:
+            self.serialPort.write(command)
+        except serial.SerialException as e:
+            raise LowLevelControllerException(e)
 
     def sendPlayAudio(self, audioCommand: AudioCommand):
         logging.info("SendPlayAudio: %s", audioCommand)
         command = CommandType.PlayAudio.value.tobytes()
         command += audioCommand.value.tobytes()
-        self.serialPort.write(command)
+        try:
+            self.serialPort.write(command)
+        except serial.SerialException as e:
+            logging.error(e)
 
     def sendStop(self):
         logging.info("SendStop")
         command = CommandType.Stop.value.tobytes()
-        self.serialPort.write(command)
+        try:
+            self.serialPort.write(command)
+        except serial.SerialException as e:
+            logging.error(e)
 
     def sendLED(self, ledCommand: LEDCommand):
         logging.info("SendLED: %s", ledCommand)
         command = CommandType.Led.value.tobytes()
         command += ledCommand.value.tobytes()
-        self.serialPort.write(command)
+        try:
+            self.serialPort.write(command)
+        except serial.SerialException as e:
+            logging.error(e)
 
     def subscribe(self, subscriber):
         subscriber._publisher = self
