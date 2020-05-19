@@ -2,7 +2,7 @@ import logging
 from transitions.extensions.nesting import NestedState
 from communication.lowLevelController import LowLevelController, LowLevelControllerException
 from navigation.navigator import Navigator
-from imageDetection.pylonDetector import PylonDetector
+from imageDetection.pylonDetector import PylonDetector, Label
 from debugGui.debugInfo import DebugInfo
 from camera.camera_provider import CameraProvider
 
@@ -19,12 +19,12 @@ class SearchingState(NestedState):
 
     def loop(self):
         frame = CameraProvider.getCamera().getFrame()
-        detectedPylons, frame_resized = self.pylonDetector.findPylons(frame)
-        detectedPylons = self.pylonDetector.calculateDistances(detectedPylons, frame_resized)
-        DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detectedPylons, frame_resized)
+        detections, frame_resized = self.pylonDetector.findObjects(frame)
+        detections = self.pylonDetector.calculateDistances(detections, frame_resized)
+        DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detections, frame_resized)
         
-        if detectedPylons:
-            logging.debug(detectedPylons)
+        if any(x[0] == Label.Pylon.value for x in detections):
+            #logging.debug(detections)
             self.parent.mission_control.navigate()
         else:
             targetVector = self.navigator.getSearchTargetVector()

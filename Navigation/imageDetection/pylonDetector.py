@@ -2,12 +2,17 @@
 import os,sys,inspect
 import cv2
 import numpy as np
+from enum import Enum
 from imageDetection import darknet
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from configreader import parser
 
 netMain = None # used in module 'darknet.py'
 metaMain = None # used in module 'darknet.py'
+
+class Label(Enum):
+    Pylon = "pylon".encode()
+    LyingPylon = "lyingPylon".encode()
+    Obstacle = "obstacle".encode()
 
 class PylonDetector():
     CONFIG_PATH = parser.get("paths", "CONFIG_PATH")
@@ -34,7 +39,7 @@ class PylonDetector():
             metaMain = darknet.load_meta(self.META_PATH.encode("ascii"))
         self.darknet_image = darknet.make_image(darknet.network_width(netMain), darknet.network_height(netMain),3)
 
-    def findPylons(self, frame):
+    def findObjects(self, frame):
         """
         Returns a tupple with the following format:
         ('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px))
