@@ -39,7 +39,11 @@ class Navigator:
         nextPylon = self.getNextPylon(detectedPylons)
         frame_width = frame.shape[0]
         xPosition = nextPylon[2][0]
-        if xPosition < (frame_width / 5): # check if the next target pylon is in the left fifth of the frame
+        distance = nextPylon[3]
+        fraction_of_frame_width = 3
+        if distance < 2000: # 2000mm
+            fraction_of_frame_width = 5
+        if xPosition < (frame_width / fraction_of_frame_width): # check if the next target pylon is in the left 'fraction' of the frame
             return self._getMoveStraightVector()
         else:
             return self._getTurnRightVector()
