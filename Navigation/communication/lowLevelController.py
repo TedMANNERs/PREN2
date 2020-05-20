@@ -81,6 +81,14 @@ class LowLevelController:
         except serial.SerialException as e:
             logging.error(e)
 
+    def sendStart(self):
+        logging.info("SendStart")
+        command = CommandType.Start.value.tobytes()
+        try:
+            self.serialPort.write(command)
+        except serial.SerialException as e:
+            logging.error(e)
+
     def sendStop(self):
         logging.info("SendStop")
         command = CommandType.Stop.value.tobytes()
