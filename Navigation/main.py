@@ -52,8 +52,8 @@ def main():
         mission_control.fail(e)
 
     if __debug__:
-        terminalThread = Thread(target=updateDebugWindows)
-        terminalThread.start()
+        debugWindowThread = Thread(target=updateDebugWindows)
+        debugWindowThread.start()
 
     while True:
         value = input("Enter command: 1=Start, 2=Stop, 3X=Audio (X: 1=ShortBeep, 2=LongBeep), 4X=LED (X: 0=off, 1=on), q=Terminate\n")
