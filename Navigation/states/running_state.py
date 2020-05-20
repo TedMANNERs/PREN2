@@ -50,5 +50,5 @@ class RunningState(NestedState):
                 if self.substate:
                     self.substate.loop()
         except Exception as e:
-            logging.error("Substate: %s, %s", self.substate, e)
+            logging.exception(e)
             self.mission_control.fail(e)
