@@ -60,14 +60,14 @@ class PylonDetector():
         frame_resized = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
         return detections, frame_resized
 
-    def calculateDistances(self, detections, frame_resized):
+    def calculateDistances(self, detectedObjects, frame_resized):
         """
-        Format of parameter 'detections':
+        Format of parameter 'detectedObjects':
         [('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)]
         The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
         """
         detections = []
-        for detection in detections:
+        for detection in detectedObjects: #TODO: Fix calculation for all labels
             distance = (self.FOCAL_LENGTH_MM * self.PYLON_REAL_HEIGHT_MM * frame_resized.shape[1]) / (detection[2][3] * self.SENSOR_HEIGHT_MM)
             detection += (distance,)
             detections.append(detection)
