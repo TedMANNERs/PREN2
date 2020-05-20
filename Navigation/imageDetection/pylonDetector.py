@@ -19,11 +19,14 @@ class PylonDetector():
     WEIGHT_PATH = parser.get("paths", "WEIGHT_PATH")
     META_PATH = parser.get("paths", "META_PATH")
     DETECTION_THRESHOLD = float(parser.get("variables", "DETECTION_THRESHOLD"))
-    FOCAL_LENGTH_MM = float(parser.get("focal_length", "FOCAL_LENGTH_MM"))
+    FOCAL_LENGTH_MM = float(parser.get("focal_length", "FOCAL_LENGTH_MM_LINUX"))
     SENSOR_HEIGHT_MM = float(parser.get("variables", "SENSOR_HEIGHT_MM"))
     PYLON_REAL_HEIGHT_MM = int(parser.get("variables", "PYLON_REAL_HEIGHT_MM"))
 
     def __init__(self):
+        if os.name == "nt": # Windows
+            self.FOCAL_LENGTH_MM = float(parser.get("focal_length", "FOCAL_LENGTH_MM_WINDOWS"))
+
         if not os.path.exists(self.CONFIG_PATH):
             raise ValueError("Invalid config path `{0}`".format(os.path.abspath(self.CONFIG_PATH)))
         if not os.path.exists(self.WEIGHT_PATH):

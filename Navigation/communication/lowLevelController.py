@@ -45,7 +45,9 @@ class LowLevelController:
 
     def __init__(self):
         self.serialPort = serial.Serial(baudrate=115200, timeout=1, write_timeout=1, parity=serial.PARITY_ODD, stopbits=serial.STOPBITS_ONE)
-        self.serialPort.port = parser.get("ports", "SERIAL_PORT")
+        self.serialPort.port = parser.get("ports", "SERIAL_PORT_LINUX")
+        if os.name == "nt":
+            self.serialPort.port = parser.get("ports", "SERIAL_PORT_WINDOWS")
         self._subscribers = set()
         self._listenerThread = threading.Thread(target=self._listen)
         self._isListening = False
