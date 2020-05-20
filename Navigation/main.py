@@ -64,7 +64,8 @@ def main():
         except Exception as e:
             logging.error(e)
             mission_control.fail(e)
-        
+    
+    _isRunning = False
     mission_control.abort()
 
 def handle_command(command, mission_control: MissionControl, llc: LowLevelController):
