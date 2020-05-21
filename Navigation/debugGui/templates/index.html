@@ -37,8 +37,8 @@ and open the template in the editor.
         xhr.send();
     
         setInterval(function() {
-            output.textContent = xhr.responseText;
-            console.log(xhr.responseText);
+            text = xhr.responseText.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            output.innerHTML = text;
         }, 1000);
     </script>
 </html>
