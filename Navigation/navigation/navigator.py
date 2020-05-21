@@ -62,6 +62,15 @@ class Navigator:
         logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
         return TargetVector(np.int16(self.currentSpeed), np.int16(self.currentAngle))
 
+    def _getReverseVector(self):
+        if self.currentAngle < 0:
+            self._updateCurrentAngle(self.currentAngle + self.ANGLE_INCREMENT, maxValue=0)
+        else:
+            self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=0)
+        self._updateCurrentSpeed(self.currentSpeed - self.SPEED_INCREMENT, minValue=-500)
+        logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
+        return TargetVector(np.int16(self.currentSpeed), np.int16(self.currentAngle))
+
     def _getTurnRightVector(self):
         newSpeed = self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
         newAngle = self._updateCurrentAngle(self.currentAngle + self.ANGLE_INCREMENT)

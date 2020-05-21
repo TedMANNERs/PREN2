@@ -9,11 +9,10 @@ import signal
 import sys
 import logging
 from threading import Thread
-from communication.lowLevelController import AudioCommand, LEDCommand
+from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
-from communication.lowLevelController import LowLevelController
 from debugGui.debugInfo import DebugInfo
 
 def main():
