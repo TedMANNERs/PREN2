@@ -1,3 +1,4 @@
+import time
 from transitions.extensions.nesting import NestedState
 from communication.lowLevelController import LowLevelController
 from imageDetection.pylonDetector import PylonDetector
@@ -20,7 +21,10 @@ class InitState(NestedState):
         # Start listening for commands from the LLC
         self.lowLevelController.startListening()
         self.lowLevelController.subscribe(event.machine)
+        time.sleep(0.5)
+        print("START_SOFTWARE")
+        self.lowLevelController.sendStart()
         if Usb.hasWifiDongle():
             self.webserver = Webserver()
             self.webserver.start()
-        pass
+        

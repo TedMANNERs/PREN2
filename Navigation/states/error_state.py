@@ -10,10 +10,6 @@ class ErrorState(NestedState):
 
     def onEnter(self, event):
         error = event.args[0]
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
         if isinstance(error, MachineError):
             if event.source_name == 'ready':
                 event.machine.recoverReady()

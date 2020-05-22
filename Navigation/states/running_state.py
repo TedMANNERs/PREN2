@@ -1,5 +1,6 @@
 import threading
 import logging
+import time
 from transitions.extensions.nesting import NestedState
 from communication.lowLevelController import LowLevelController, AudioCommand, LEDCommand
 from imageDetection.pylonDetector import PylonDetector
@@ -31,18 +32,14 @@ class RunningState(NestedState):
                 ])
 
     def onEnter(self, event):
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendLED(LEDCommand.On)
         self._isRunning = True
         self._loopThread = threading.Thread(target=self._loop)
         self._loopThread.start()
 
     def onExit(self, event):
-        self.lowLevelController.sendPlayAudio(AudioCommand.ShortBeep)
-        self.lowLevelController.sendPlayAudio(AudioCommand.LongBeep)
-        self.lowLevelController.sendLED(LEDCommand.Off)
         self._isRunning = False
+        time.sleep(1)
+        self.lowLevelController.sendStop()
 
     def _loop(self):
         try:

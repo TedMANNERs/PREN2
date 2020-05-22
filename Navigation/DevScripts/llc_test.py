@@ -11,10 +11,9 @@ from common.timer import Timer
 def move(llc: LowLevelController, getVectorFunction):
     timer = Timer()
     timer.start()
-    while(timer.getElapsedTime() < 2): #Seconds
+    while(timer.getElapsedTime() < 5): #Seconds
         llc.sendTargetVector(getVectorFunction())
         time.sleep(0.05)
-    llc.sendStop()
     timer.stop()
 
 def llc_test():
@@ -28,9 +27,14 @@ def llc_test():
     navigator = Navigator()
 
     llc.startListening()
+    time.sleep(2)
+    llc.sendStart()
     while True:
         value = input("Enter command: w=Forward, s=Reverse, a=TurnLeft, d=TurnRight, q=Terminate\n")
         if value == "q":
+            llc.sendStop()
+            time.sleep(1)
+            llc.stopListening()
             break
         try:
             if value == "w":

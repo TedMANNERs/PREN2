@@ -4,9 +4,9 @@ from common.dataTypes import TargetVector
 from common.timer import Timer
 
 class Navigator:
-    MAX_SPEED = 500
-    SPEED_INCREMENT = 20
-    MAX_ANGLE = 20
+    MAX_SPEED = 1000
+    SPEED_INCREMENT = 100
+    MAX_ANGLE = 45
     ANGLE_INCREMENT = 5
     
     def __init__(self):

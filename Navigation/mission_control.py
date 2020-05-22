@@ -18,7 +18,7 @@ from states.error_state import ErrorState
 #TODO: Replace strings with constants
 class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
-        states = [InitState(llc, detector), ReadyState(), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
+        states = [InitState(llc, detector), ReadyState(llc), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
         transitions = [
             { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
             { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},
@@ -44,11 +44,11 @@ class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
 
     # Is called when new data from the LLC is received.
     def onCommandReceived(self, command: Command):
-        logging.debug("MissionControl: Received command = %s", command)
+        #logging.debug("MissionControl: Received command = %s", command)
         if command.commandType == CommandType.Start:
             self.start()
         elif command.commandType == CommandType.SendSensorData:
-            logging.info(command.data)
+            #logging.info(command.data)
             #TODO: Implement handling of sensor data
             pass
         elif command.commandType == CommandType.Stop:

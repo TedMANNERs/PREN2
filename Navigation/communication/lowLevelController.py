@@ -133,7 +133,7 @@ class LowLevelController:
                 logging.info("Stop received")
                 self._notify(Command(commandType))
             elif commandType == CommandType.SendSensorData:
-                logging.info("SendSensorData received")
+                #logging.info("SendSensorData received")
                 sensorData = self._readSensorData()
                 self._notify(Command(commandType, sensorData))
         self.serialPort.close()

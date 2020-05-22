@@ -7,7 +7,6 @@ class ReadyState(NestedState):
         super().__init__(name='ready', on_enter=self.onEnter, on_exit=self.onExit)
     
     def onEnter(self, event):
-        self.llc.sendStart()
         pass
 
     def onExit(self, event):
