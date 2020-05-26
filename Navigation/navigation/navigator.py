@@ -2,12 +2,15 @@ import numpy as np
 import logging
 from common.dataTypes import TargetVector
 from common.timer import Timer
+from configreader import parser
 
 class Navigator:
-    MAX_SPEED = 1000
-    SPEED_INCREMENT = 100
-    MAX_ANGLE = 45
-    ANGLE_INCREMENT = 5
+    FORWARD_SPEED = int(parser.get("navigation_variables", "FORWARD_SPEED"))
+    REVERSE_SPEED = int(parser.get("navigation_variables", "REVERSE_SPEED"))
+    SPEED_INCREMENT = int(parser.get("navigation_variables", "SPEED_INCREMENT"))
+    MAX_ANGLE_LEFT = int(parser.get("navigation_variables", "MAX_ANGLE_LEFT"))
+    MAX_ANGLE_RIGHT = int(parser.get("navigation_variables", "MAX_ANGLE_RIGHT"))
+    ANGLE_INCREMENT = int(parser.get("navigation_variables", "ANGLE_INCREMENT"))
     
     def __init__(self):
         self.currentSpeed = 0
@@ -67,7 +70,7 @@ class Navigator:
             self._updateCurrentAngle(self.currentAngle + self.ANGLE_INCREMENT, maxValue=0)
         else:
             self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=0)
-        self._updateCurrentSpeed(self.currentSpeed - self.SPEED_INCREMENT, minValue=-500)
+        self._updateCurrentSpeed(self.currentSpeed - self.SPEED_INCREMENT, minValue=self.REVERSE_SPEED)
         logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
         return TargetVector(np.int16(self.currentSpeed), np.int16(self.currentAngle))
 
@@ -85,7 +88,7 @@ class Navigator:
 
     def _updateCurrentSpeed(self, value, minValue = 0, maxValue = None):
         if maxValue is None:
-            maxValue = self.MAX_SPEED
+            maxValue = self.FORWARD_SPEED
 
         newSpeed = self._clamp(value, minValue, maxValue)
         self.currentSpeed = newSpeed
@@ -93,9 +96,9 @@ class Navigator:
 
     def _updateCurrentAngle(self, value, minValue = None, maxValue = None):
         if minValue is None:
-            minValue = 0 - Navigator.MAX_ANGLE
+            minValue = self.MAX_ANGLE_LEFT
         if maxValue is None:
-            maxValue = self.MAX_ANGLE
+            maxValue = self.MAX_ANGLE_RIGHT
 
         newAngle = self._clamp(value, minValue, maxValue)
         self.currentAngle = newAngle
