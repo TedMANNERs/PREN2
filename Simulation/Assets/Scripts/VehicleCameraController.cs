@@ -19,6 +19,11 @@ namespace Assets.Scripts
         private CancellationToken _cancellationToken;
         private readonly ConcurrentQueue<byte[]> _imageQueue = new ConcurrentQueue<byte[]>();
 
+        [SerializeField]
+        private int _imageHeight = 512;
+        [SerializeField]
+        private int _imageWidth = 512;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -80,7 +85,7 @@ namespace Assets.Scripts
 
         private void EnqueueCameraFrame()
         {
-            RenderTexture rt = new RenderTexture(416, 416, 24);
+            RenderTexture rt = new RenderTexture(_imageWidth, _imageHeight, 24);
             _camera.targetTexture = rt;
 
             _camera.Render();
