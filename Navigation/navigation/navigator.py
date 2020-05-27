@@ -10,6 +10,7 @@ class Navigator:
     SPEED_INCREMENT = int(parser.get("navigation_variables", "SPEED_INCREMENT"))
     MAX_ANGLE_LEFT = int(parser.get("navigation_variables", "MAX_ANGLE_LEFT"))
     MAX_ANGLE_RIGHT = int(parser.get("navigation_variables", "MAX_ANGLE_RIGHT"))
+    MAX_SEARCH_ANGLE = int(parser.get("navigation_variables", "MAX_SEARCH_ANGLE"))
     ANGLE_INCREMENT = int(parser.get("navigation_variables", "ANGLE_INCREMENT"))
     
     def __init__(self):
@@ -53,7 +54,7 @@ class Navigator:
 
     def getSearchTargetVector(self):
         newSpeed = self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
-        newAngle = self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=-30)
+        newAngle = self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=self.MAX_SEARCH_ANGLE)
         return TargetVector(np.int16(newSpeed), np.int16(newAngle))
 
     def _getMoveStraightVector(self):
