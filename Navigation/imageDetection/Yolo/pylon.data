@@ -1,4 +1,4 @@
-classes = 3
+classes = 2
 
 train = imageDetection/yolo/train/train.txt
 

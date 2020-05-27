@@ -1,3 +1,2 @@
 pylon
 lyingPylon
-obstacle
