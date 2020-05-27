@@ -17,7 +17,7 @@ from debugGui.debugInfo import DebugInfo
 
 def main():
     logging.basicConfig(
-        format='%(asctime)s %(levelname)s {%(module)s:%(lineno)d}     %(message)s',
+        format='%(asctime)s %(levelname)-8s {%(lineno)4s:%(module)-10s}  %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
         level=logging.DEBUG,
         handlers=[
