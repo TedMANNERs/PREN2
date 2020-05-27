@@ -54,13 +54,21 @@ class BOX(Structure):
                 ("h", c_float)]
 
 class DETECTION(Structure):
-    _fields_ = [("bbox", BOX),
-                ("classes", c_int),
-                ("prob", POINTER(c_float)),
-                ("mask", POINTER(c_float)),
-                ("objectness", c_float),
-                ("sort_class", c_int)]
-
+    if os.name == "nt":
+        _fields_ = [("bbox", BOX),
+                    ("classes", c_int),
+                    ("prob", POINTER(c_float)),
+                    ("mask", POINTER(c_float)),
+                    ("objectness", c_float),
+                    ("sort_class", c_int),
+                    ("uc", POINTER(c_float))]
+    else:
+        _fields_ = [("bbox", BOX),
+                    ("classes", c_int),
+                    ("prob", POINTER(c_float)),
+                    ("mask", POINTER(c_float)),
+                    ("objectness", c_float),
+                    ("sort_class", c_int)]
 
 class IMAGE(Structure):
     _fields_ = [("w", c_int),
