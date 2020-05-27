@@ -15,15 +15,16 @@ and open the template in the editor.
 html, body { height: 100%; padding: 0; margin: 0; }
 div { width: 50%; height: 50%; float: left; }
 #div1 { background: #DDD; }
-#div2 { background: #AAA; }
-#div3 { background: rgb(133, 133, 133); }
-#div4 { background: rgb(94, 94, 94); }
+#div2 { background: #AAA; display: flex; flex-direction: column; }
+#div3 { background: rgb(133, 133, 133); width: auto; }
+#div3 img { width: auto;}
 #output {
-    width: 100%;
-    height: auto;
+    width: auto;
     margin-left: 5px;
-    margin-right: 5px;
     font-size: initial;
+    overflow: scroll;
+    flex: auto;
+    white-space: nowrap;
 }
 
 
