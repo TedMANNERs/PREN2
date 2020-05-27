@@ -14,8 +14,11 @@ from mission_control import MissionControl
 from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector
 from debugGui.debugInfo import DebugInfo
+from configreader import parser
+from distutils.util import strtobool
 
 def main():
+    ENABLE_DEBUG_WINDOWS = bool(strtobool(parser.get("debug", "ENABLE_DEBUG_WINDOWS")))
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s {%(lineno)4s:%(module)-10s}  %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
@@ -50,7 +53,7 @@ def main():
         logging.error(e)
         mission_control.fail(e)
 
-    if __debug__:
+    if __debug__ and ENABLE_DEBUG_WINDOWS:
         debugWindowThread = Thread(target=updateDebugWindows)
         debugWindowThread.start()
 

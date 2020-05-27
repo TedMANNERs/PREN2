@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import logging
+import distutils
 from transitions.extensions.nesting import NestedState
 from transitions.extensions import LockedHierarchicalGraphMachine
 from navigation.navigator import Navigator
@@ -14,6 +15,8 @@ from states.ready_state import ReadyState
 from states.aborted_state import AbortedState
 from states.running_state import RunningState
 from states.error_state import ErrorState
+from configreader import parser
+from distutils.util import strtobool
 
 #TODO: Replace strings with constants
 class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
@@ -34,7 +37,13 @@ class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
             { 'trigger': 'recoverRunning', 'source': 'error', 'dest': 'running'},
             { 'trigger': 'fail', 'source': ['init', 'ready', 'running'], 'dest': 'error'}
         ]
-        super().__init__(model=self, states=states, transitions=transitions, initial='init', before_state_change='update_state_diagram', after_state_change='update_state_diagram', send_event=True, queued=True)
+        
+        super().__init__(model=self, states=states, transitions=transitions, initial='init', send_event=True, queued=True)
+        ENABLE_STATE_DIAGRAM = bool(strtobool(parser.get("debug", "ENABLE_STATE_DIAGRAM")))
+        if ENABLE_STATE_DIAGRAM:
+            self.before_state_change = self.update_state_diagram
+            self.after_state_change = self.update_state_diagram
+
 
     def update_state_diagram(self, event):
         graph = self.model.get_graph()
