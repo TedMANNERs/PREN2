@@ -21,7 +21,9 @@ class PylonDetector():
     DETECTION_THRESHOLD = float(parser.get("variables", "DETECTION_THRESHOLD"))
     FOCAL_LENGTH_MM = float(parser.get("focal_length", "FOCAL_LENGTH_MM_LINUX"))
     SENSOR_HEIGHT_MM = float(parser.get("variables", "SENSOR_HEIGHT_MM"))
-    PYLON_REAL_HEIGHT_MM = int(parser.get("variables", "PYLON_REAL_HEIGHT_MM"))
+    PYLON_HEIGHT_MM = int(parser.get("variables", "PYLON_HEIGHT_MM"))
+    LYING_PYLON_HEIGHT_MM = int(parser.get("variables", "LYING_PYLON_HEIGHT_MM"))
+    OBSTACLE_REAL_HEIGHT_MM = int(parser.get("variables", "OBSTACLE_HEIGHT_MM"))
 
     def __init__(self):
         if os.name == "nt": # Windows
@@ -60,39 +62,43 @@ class PylonDetector():
         frame_resized = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2RGB)
         return detections, frame_resized
 
-    def calculateDistances(self, detectedObjects, frame_resized):
+    def calculateDistance(self, detection, frame_resized):
         """
-        Format of parameter 'detectedObjects':
-        [('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)]
+        Format of parameter 'detection':
+        ('obj_label', confidence, (bounding_box_x_px, bounding_box_y_px, bounding_box_width_px, bounding_box_height_px), distance)
         The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
         """
-        detections = []
-        for detection in detectedObjects: #TODO: Fix calculation for all labels
-            distance = (self.FOCAL_LENGTH_MM * self.PYLON_REAL_HEIGHT_MM * frame_resized.shape[1]) / (detection[2][3] * self.SENSOR_HEIGHT_MM)
-            detection += (distance,)
-            detections.append(detection)
-        return detections
+        object_height = 0
+        if detection[0] == Label.Pylon:
+            object_height = self.PYLON_HEIGHT_MM
+        elif detection[0] == Label.LyingPylon:
+            object_height = self.LYING_PYLON_HEIGHT_MM
+        elif detection[0] == Label.Obstacle:
+            object_height = self.OBSTACLE_REAL_HEIGHT_MM
 
-    def drawBoxes(self, detections, frame):
-        for detection in detections:
-            x, y, w, h = detection[2][0],\
-                detection[2][1],\
-                detection[2][2],\
-                detection[2][3]
-            xmin, ymin, xmax, ymax = self.__convertBack(
-                float(x), float(y), float(w), float(h))
-            pt1 = (xmin, ymin)
-            pt2 = (xmax, ymax)
-            cv2.rectangle(frame, pt1, pt2, (0, 255, 0), 1)
-            cv2.putText(frame,
-                        detection[0].decode() +
-                        " [" + str(round(detection[1] * 100, 2)) + "]", #TODO: Document what the values mean, potentally refactor
-                        (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        [0, 255, 0], 2)
-            cv2.putText(frame,
-                        "dist={0}mm".format(int(detection[3])),
-                        (pt1[0], pt1[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        [0, 255, 0], 2)
+        distance = (self.FOCAL_LENGTH_MM * object_height * frame_resized.shape[1]) / (detection[2][3] * self.SENSOR_HEIGHT_MM)
+        detection += (distance,)
+        return detection
+
+    def drawBox(self, detection, frame):
+        x, y, w, h = detection[2][0],\
+            detection[2][1],\
+            detection[2][2],\
+            detection[2][3]
+        xmin, ymin, xmax, ymax = self.__convertBack(
+            float(x), float(y), float(w), float(h))
+        pt1 = (xmin, ymin)
+        pt2 = (xmax, ymax)
+        cv2.rectangle(frame, pt1, pt2, (0, 255, 0), 1)
+        cv2.putText(frame,
+                    detection[0].decode() +
+                    " [" + str(round(detection[1] * 100, 2)) + "]", #TODO: Document what the values mean, potentally refactor
+                    (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    [0, 255, 0], 2)
+        cv2.putText(frame,
+                    "dist={0}mm".format(int(detection[3])),
+                    (pt1[0], pt1[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    [0, 255, 0], 2)
         return frame
 
     def __convertBack(self, x, y, w, h):

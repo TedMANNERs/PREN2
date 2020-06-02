@@ -5,8 +5,11 @@ from navigation.navigator import Navigator
 from imageDetection.pylonDetector import PylonDetector, Label
 from debugGui.debugInfo import DebugInfo
 from camera.camera_provider import CameraProvider
+from configreader import parser
+from distutils.util import strtobool
 
 class SearchingState(NestedState):
+    ENABLE_BOX_DRAWING = bool(strtobool(parser.get("debug", "ENABLE_BOX_DRAWING")))
     def __init__(self, parent, lowLevelController: LowLevelController, pylonDetector: PylonDetector, navigator: Navigator):
         self.parent = parent
         self.lowLevelController = lowLevelController
@@ -20,19 +23,24 @@ class SearchingState(NestedState):
     def loop(self):
         frame = CameraProvider.getCamera().getFrame()
         detections, frame_resized = self.pylonDetector.findObjects(frame)
-        detections = self.pylonDetector.calculateDistances(detections, frame_resized)
-        DebugInfo.latestFrame =  self.pylonDetector.drawBoxes(detections, frame_resized)
-        
-        if any(x[0] == Label.Pylon.value for x in detections):
-            #logging.debug(detections)
-            self.parent.mission_control.navigate()
-        else:
-            targetVector = self.navigator.getSearchTargetVector()
-            try:
-                self.lowLevelController.sendTargetVector(targetVector)
-            except LowLevelControllerException as e:
-                logging.error(e)
-                self.parent.mission_control.stop()
 
+        for detection in detections:
+            if detection[0] == Label.Pylon.value:
+                #logging.debug(detections)
+                self.parent.mission_control.navigate()
+            else:
+                targetVector = self.navigator.getSearchTargetVector()
+                try:
+                    self.lowLevelController.sendTargetVector(targetVector)
+                except LowLevelControllerException as e:
+                    logging.error(e)
+                    self.parent.mission_control.stop()
+            
+            detection = self.pylonDetector.calculateDistance(detection, frame_resized)
+            if self.ENABLE_BOX_DRAWING:
+                frame_resized = self.pylonDetector.drawBox(detection, frame_resized)
+
+        DebugInfo.latestFrame =  frame_resized
+        
     def onExit(self, event):
         pass
