@@ -28,19 +28,19 @@ class SearchingState(NestedState):
             if detection[0] == Label.Pylon.value:
                 #logging.debug(detections)
                 self.parent.mission_control.navigate()
-            else:
-                targetVector = self.navigator.getSearchTargetVector()
-                try:
-                    self.lowLevelController.sendTargetVector(targetVector)
-                except LowLevelControllerException as e:
-                    logging.error(e)
-                    self.parent.mission_control.stop()
-            
+                return
+                
             detection = self.pylonDetector.calculateDistance(detection, frame_resized)
             if self.ENABLE_BOX_DRAWING:
                 frame_resized = self.pylonDetector.drawBox(detection, frame_resized)
 
         DebugInfo.latestFrame =  frame_resized
+        targetVector = self.navigator.getSearchTargetVector()
+        try:
+            self.lowLevelController.sendTargetVector(targetVector)
+        except LowLevelControllerException as e:
+            logging.error(e)
+            self.parent.mission_control.stop()
         
     def onExit(self, event):
         pass
