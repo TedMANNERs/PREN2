@@ -34,14 +34,15 @@ class NavigatingState(NestedState):
             if detection[0] == Label.Pylon.value:
                 self.timer.reset()
                 pylons.append(detection) # Filter pylons from all detections
-            elif self.timer.getElapsedTime() > 2: # Seconds
-                self.timer.stop()
-                self.parent.mission_control.search()
-                return
             
             if self.ENABLE_BOX_DRAWING:
                 frame_resized = self.pylonDetector.drawBox(detection, frame_resized)
         
+        if self.timer.getElapsedTime() > 2: # Seconds
+                self.timer.stop()
+                self.parent.mission_control.search()
+                return
+
         DebugInfo.latestFrame =  frame_resized
         targetVector = self.navigator.getNavigationTargetVector(pylons, frame_resized, self.timer)
         try:
