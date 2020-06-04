@@ -1,3 +1,4 @@
+import logging
 from transitions.extensions.nesting import NestedState
 
 class EmergencyState(NestedState):
@@ -7,6 +8,8 @@ class EmergencyState(NestedState):
     
     def onEnter(self, event):
         self.parent.substate = self
+        logging.info("EMERGENCY TRIGGERED - Stopping...")
+        self.parent.mission_control.stop()
 
     def loop(self):
         pass

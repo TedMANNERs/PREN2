@@ -7,6 +7,7 @@ from debugGui.debugInfo import DebugInfo
 from camera.camera_provider import CameraProvider
 from configreader import parser
 from distutils.util import strtobool
+from common.timer import Timer
 
 class SearchingState(NestedState):
     ENABLE_BOX_DRAWING = bool(strtobool(parser.get("debug", "ENABLE_BOX_DRAWING")))
@@ -19,6 +20,8 @@ class SearchingState(NestedState):
     
     def onEnter(self, event):
         self.parent.substate = self
+        self.timer = Timer()
+        self.timer.start()
 
     def loop(self):
         frame = CameraProvider.getCamera().getFrame()
@@ -33,6 +36,9 @@ class SearchingState(NestedState):
             detection = self.pylonDetector.calculateDistance(detection, frame_resized)
             if self.ENABLE_BOX_DRAWING:
                 frame_resized = self.pylonDetector.drawBox(detection, frame_resized)
+
+        if self.timer.getElapsedTime() > 5: # Seconds
+            self.parent.mission_control.panic()
 
         DebugInfo.latestFrame =  frame_resized
         targetVector = self.navigator.getSearchTargetVector()
