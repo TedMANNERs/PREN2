@@ -45,7 +45,7 @@ class Navigator:
         xPosition = nextPylon[2][0]
         distance = nextPylon[3]
         fraction_of_frame_width = 3
-        if distance < 2000: # 2000mm
+        if distance < 2500: # 2000mm
             fraction_of_frame_width = 5
         if xPosition < (frame_width / fraction_of_frame_width): # check if the next target pylon is in the left 'fraction' of the frame
             return self._getMoveStraightVector()
