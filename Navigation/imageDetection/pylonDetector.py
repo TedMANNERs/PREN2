@@ -69,11 +69,11 @@ class PylonDetector():
         The X and Y coordinates are from the center of the bounding box. Subtract half the width or height to get the lower corner.
         """
         object_height = 0
-        if detection[0] == Label.Pylon:
+        if detection[0] == Label.Pylon.value:
             object_height = self.PYLON_HEIGHT_MM
-        elif detection[0] == Label.LyingPylon:
+        elif detection[0] == Label.LyingPylon.value:
             object_height = self.LYING_PYLON_HEIGHT_MM
-        elif detection[0] == Label.Obstacle:
+        elif detection[0] == Label.Obstacle.value:
             object_height = self.OBSTACLE_REAL_HEIGHT_MM
 
         distance = (self.FOCAL_LENGTH_MM * object_height * frame_resized.shape[1]) / (detection[2][3] * self.SENSOR_HEIGHT_MM)
