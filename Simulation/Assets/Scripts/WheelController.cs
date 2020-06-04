@@ -79,8 +79,8 @@ public class WheelController : MonoBehaviour
 
     public void TurnLeft(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(1, _force);
-        _wheelLeftBack.motor = UpdateMotor(1, _force);
+        _wheelLeftFront.motor = UpdateMotor(100, _force);
+        _wheelLeftBack.motor = UpdateMotor(100, _force);
         _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force);
         _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force);
     }
@@ -89,12 +89,20 @@ public class WheelController : MonoBehaviour
     {
         _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force);
         _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(-1, _force);
-        _wheelRightBack.motor = UpdateMotor(-1, _force);
+        _wheelRightFront.motor = UpdateMotor(-100, _force);
+        _wheelRightBack.motor = UpdateMotor(-100, _force);
     }
 
     private JointMotor UpdateMotor(int targetVelocity, int force)
     {
         return new JointMotor { targetVelocity = targetVelocity, force = force }; ;
+    }
+
+    public void Apply(int leftVelocity, int rightVelocity)
+    {
+        _wheelLeftFront.motor = UpdateMotor(leftVelocity, _force);
+        _wheelLeftBack.motor = UpdateMotor(leftVelocity, _force);
+        _wheelRightFront.motor = UpdateMotor(-rightVelocity, _force);
+        _wheelRightBack.motor = UpdateMotor(-rightVelocity, _force);
     }
 }

@@ -56,6 +56,8 @@ namespace Assets.Scripts
         [SerializeField]
         private bool _isControlledByPlayer;
 
+        [SerializeField]
+        private int _turnFactor = 20;
 
         // Start is called before the first frame update
         void Start()
@@ -139,6 +141,9 @@ namespace Assets.Scripts
                                 AudioCommand audioCommand = (AudioCommand)_serialPort.ReadByte();
                                 Debug.Log($"Received AudioCommand = {audioCommand}");
                                 break;
+                            case CommandType.Start:
+                                Debug.Log("Received Start");
+                                break;
                             case CommandType.Stop:
                                 Debug.Log("Received Stop");
                                 break;
@@ -168,15 +173,15 @@ namespace Assets.Scripts
         {
             Debug.Log($"Received TargetVector: Speed = {speed}, angle = {angle}");
             if (angle < 0)
-                _wheelController.TurnLeft(speed);
+                _wheelController.Apply(speed + angle * _turnFactor, speed); //Left
             else if (angle > 0)
-                _wheelController.TurnRight(speed);
+                _wheelController.Apply(speed, speed - angle * _turnFactor); //Right
             else
             {
                 if (speed < 0)
-                    _wheelController.Reverse(speed);
+                    _wheelController.Apply(speed, speed); //Reverse
                 else
-                    _wheelController.MoveForward(speed);
+                    _wheelController.Apply(speed, speed); // Forward
             }
         }
     }
