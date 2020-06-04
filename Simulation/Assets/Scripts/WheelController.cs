@@ -19,6 +19,9 @@ public class WheelController : MonoBehaviour
     [SerializeField]
     private int _force = 100;
 
+    [SerializeField]
+    private int _targetVelocityTurnOpposite = 1;
+
     public float WheelLeftFrontVelocity =>  _wheelLeftFront.velocity;
     public float WheelLeftBackVelocity =>  _wheelLeftBack.velocity;
     public float WheelRightFrontVelocity =>  _wheelRightFront.velocity;
@@ -79,8 +82,8 @@ public class WheelController : MonoBehaviour
 
     public void TurnLeft(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(100, _force);
-        _wheelLeftBack.motor = UpdateMotor(100, _force);
+        _wheelLeftFront.motor = UpdateMotor(_targetVelocityTurnOpposite, _force);
+        _wheelLeftBack.motor = UpdateMotor(_targetVelocityTurnOpposite, _force);
         _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force);
         _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force);
     }
@@ -89,8 +92,8 @@ public class WheelController : MonoBehaviour
     {
         _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force);
         _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(-100, _force);
-        _wheelRightBack.motor = UpdateMotor(-100, _force);
+        _wheelRightFront.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force);
+        _wheelRightBack.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force);
     }
 
     private JointMotor UpdateMotor(int targetVelocity, int force)
