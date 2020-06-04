@@ -37,7 +37,7 @@ class SearchingState(NestedState):
             if self.ENABLE_BOX_DRAWING:
                 frame_resized = self.pylonDetector.drawBox(detection, frame_resized)
 
-        if self.timer.getElapsedTime() > 5: # Seconds
+        if self.timer.getElapsedTime() > 6: # Seconds
             self.parent.mission_control.panic()
             return
 

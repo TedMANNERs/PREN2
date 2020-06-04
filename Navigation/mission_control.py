@@ -15,13 +15,14 @@ from states.ready_state import ReadyState
 from states.aborted_state import AbortedState
 from states.running_state import RunningState
 from states.error_state import ErrorState
+from states.parcoursCompleted_state import ParcoursCompletedState
 from configreader import parser
 from distutils.util import strtobool
 
 #TODO: Replace strings with constants
 class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator):
-        states = [InitState(llc, detector), ReadyState(llc), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self)]
+        states = [InitState(llc, detector), ReadyState(llc), ErrorState(llc), AbortedState(llc), RunningState(llc, detector, navigator, self), ParcoursCompletedState(llc)]
         transitions = [
             { 'trigger': 'initialize', 'source': 'init', 'dest': 'ready'},
             { 'trigger': 'start', 'source': 'ready', 'dest': 'running'},
@@ -32,7 +33,7 @@ class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
             { 'trigger': 'stop', 'source': 'running', 'dest': 'ready'},
             { 'trigger': 'panic', 'source': 'running_searching', 'dest': 'running_emergency'},
             { 'trigger': 'search', 'source': ['running_navigating', 'running_reversing', 'running_crossingObstacle', 'running_emergency'], 'dest': 'running_searching'},
-            { 'trigger': 'endParcours', 'source': 'running_searching', 'dest': 'running_parcoursCompleted'},
+            { 'trigger': 'endParcours', 'source': 'running_navigating', 'dest': 'parcoursCompleted'},
             { 'trigger': 'recoverReady', 'source': 'error', 'dest': 'ready'},
             { 'trigger': 'recoverRunning', 'source': 'error', 'dest': 'running'},
             { 'trigger': 'fail', 'source': ['init', 'ready', 'running'], 'dest': 'error'}

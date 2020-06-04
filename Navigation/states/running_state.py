@@ -10,7 +10,6 @@ from states.running.navigating_state import NavigatingState
 from states.running.reversing_state import ReversingState
 from states.running.crossingObstacle_state import CrossingObstacleState
 from states.running.emergency_state import EmergencyState
-from states.running.parcoursCompleted_state import ParcoursCompletedState
 
 class RunningState(NestedState):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator, mission_control):
@@ -27,8 +26,7 @@ class RunningState(NestedState):
                     NavigatingState(self, llc, detector, navigator),
                     ReversingState(self),
                     CrossingObstacleState(self),
-                    EmergencyState(self),
-                    ParcoursCompletedState(self)
+                    EmergencyState(self)
                 ])
 
     def onEnter(self, event):
