@@ -39,6 +39,7 @@ class SearchingState(NestedState):
 
         if self.timer.getElapsedTime() > 5: # Seconds
             self.parent.mission_control.panic()
+            return
 
         DebugInfo.latestFrame =  frame_resized
         targetVector = self.navigator.getSearchTargetVector()
