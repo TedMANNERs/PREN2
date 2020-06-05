@@ -58,54 +58,57 @@ public class WheelController : MonoBehaviour
 
     public void Reverse(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(0-targetVelocity, _force);
-        _wheelLeftBack.motor = UpdateMotor(0-targetVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(targetVelocity, _force);
-        _wheelRightBack.motor = UpdateMotor(targetVelocity, _force);
+        _wheelLeftFront.motor = UpdateMotor(0-targetVelocity, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(0-targetVelocity, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(targetVelocity, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(targetVelocity, _force, _wheelRightBack.motor);
     }
 
     public void Neutral()
     {
-        _wheelLeftFront.motor = new JointMotor();
-        _wheelLeftBack.motor = new JointMotor();
-        _wheelRightFront.motor = new JointMotor();
-        _wheelRightBack.motor = new JointMotor();
+        _wheelLeftFront.motor = UpdateMotor(0, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(0, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(0, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(0, _force, _wheelRightBack.motor);
     }
 
     public void MoveForward(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force);
-        _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force);
-        _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force);
+        _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force, _wheelRightBack.motor);
     }
 
     public void TurnLeft(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(_targetVelocityTurnOpposite, _force);
-        _wheelLeftBack.motor = UpdateMotor(_targetVelocityTurnOpposite, _force);
-        _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force);
-        _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force);
+        _wheelLeftFront.motor = UpdateMotor(_targetVelocityTurnOpposite, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(_targetVelocityTurnOpposite, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(targetVelocity * -1, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(targetVelocity * -1, _force, _wheelRightBack.motor);
     }
 
     public void TurnRight(int targetVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force);
-        _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force);
-        _wheelRightBack.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force);
+        _wheelLeftFront.motor = UpdateMotor(targetVelocity, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(targetVelocity, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(-_targetVelocityTurnOpposite, _force, _wheelRightBack.motor);
     }
 
-    private JointMotor UpdateMotor(int targetVelocity, int force)
+    private JointMotor UpdateMotor(int targetVelocity, int force, JointMotor motor)
     {
-        return new JointMotor { targetVelocity = targetVelocity, force = force }; ;
+        motor.targetVelocity = targetVelocity;
+        motor.force = force;
+        motor.freeSpin = false;
+        return motor;
     }
 
     public void Apply(int leftVelocity, int rightVelocity)
     {
-        _wheelLeftFront.motor = UpdateMotor(leftVelocity, _force);
-        _wheelLeftBack.motor = UpdateMotor(leftVelocity, _force);
-        _wheelRightFront.motor = UpdateMotor(-rightVelocity, _force);
-        _wheelRightBack.motor = UpdateMotor(-rightVelocity, _force);
+        _wheelLeftFront.motor = UpdateMotor(leftVelocity, _force, _wheelLeftFront.motor);
+        _wheelLeftBack.motor = UpdateMotor(leftVelocity, _force, _wheelLeftBack.motor);
+        _wheelRightFront.motor = UpdateMotor(-rightVelocity, _force, _wheelRightFront.motor);
+        _wheelRightBack.motor = UpdateMotor(-rightVelocity, _force, _wheelRightBack.motor);
     }
 }
