@@ -89,16 +89,26 @@ class PylonDetector():
             float(x), float(y), float(w), float(h))
         pt1 = (xmin, ymin)
         pt2 = (xmax, ymax)
-        cv2.rectangle(frame, pt1, pt2, (0, 255, 0), 1)
+
+        colorArray = [0, 255, 0]
+        colorTuple = (0, 255, 0)
+        if detection[0] == Label.LyingPylon.value:
+            colorArray = [0, 0, 255]
+            colorTuple = (0, 0, 255)
+        elif detection[0] == Label.Obstacle.value:
+            colorArray = [255, 0, 0]
+            colorTuple = (255, 0, 0)
+
+        cv2.rectangle(frame, pt1, pt2, colorTuple, 1)
         cv2.putText(frame,
                     detection[0].decode() +
                     " [" + str(round(detection[1] * 100, 2)) + "]", #TODO: Document what the values mean, potentally refactor
                     (pt1[0], pt1[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    [0, 255, 0], 2)
+                    colorArray, 2)
         cv2.putText(frame,
                     "dist={0}mm".format(int(detection[3])),
                     (pt1[0], pt1[1] - 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                    [0, 255, 0], 2)
+                    colorArray, 2)
         return frame
 
     def __convertBack(self, x, y, w, h):
