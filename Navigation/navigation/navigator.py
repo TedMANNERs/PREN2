@@ -25,7 +25,7 @@ class Navigator:
         """
         index = np.argmax([x[2][0] for x in detectedPylons]) #Get index of the detected object with the largest 'bounding_box_x_px'
         rightmost_nearest_pylon = detectedPylons[index]
-        logging.debug("Rightmost Nearest Pylon = {0}, Index = {1}".format(rightmost_nearest_pylon, index))
+        #logging.debug("Rightmost Nearest Pylon = {0}, Index = {1}".format(rightmost_nearest_pylon, index))
         return rightmost_nearest_pylon
 
     def getNavigationTargetVector(self, detectedPylons, frame, timer: Timer):

@@ -38,9 +38,10 @@ class NavigatingState(NestedState):
                 self.timer.reset()
                 pylons.append(detection) # Filter pylons from all detections
 
-            if self.lap >= 2:
+            if self.lap >= 2 and self.lapTimer.getElapsedTime() > 2:
                 self.parent.mission_control.endParcours()
-            if detection[0] == Label.LyingPylon.value and detection[3] < 3500 and self.lapTimer.getElapsedTime() > 3:
+                return
+            if detection[0] == Label.LyingPylon.value and detection[3] < 3500 and self.lapTimer.getElapsedTime() > 5:
                 logging.info("LAP COMPLETED")
                 self.lap += 1
                 self.lapTimer.reset()
