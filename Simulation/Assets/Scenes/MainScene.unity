@@ -85253,7 +85253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88970ae824ccd324ebbadc091371ea5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isControlledByPlayer: 1
+  _isControlledByPlayer: 0
   _turnFactor: 20
 --- !u!23 &8298828280266148756
 MeshRenderer:
