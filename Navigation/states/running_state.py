@@ -47,7 +47,7 @@ class RunningState(NestedState):
                     start = timer()
                     self.substate.loop()
                     end = timer()
-                    logging.debug("Looptime = {0}".format(end - start))
+                    logging.debug("Running State Looptime = {0}".format(end - start))
         except Exception as e:
             logging.exception(e)
             self.mission_control.fail(e)

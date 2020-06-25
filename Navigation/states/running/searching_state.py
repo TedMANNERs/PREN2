@@ -8,6 +8,7 @@ from camera.camera_provider import CameraProvider
 from configreader import parser
 from distutils.util import strtobool
 from common.timer import Timer
+from timeit import default_timer as perfTimer
 
 class SearchingState(NestedState):
     ENABLE_BOX_DRAWING = bool(strtobool(parser.get("debug", "ENABLE_BOX_DRAWING")))
@@ -24,6 +25,7 @@ class SearchingState(NestedState):
         self.timer.start()
 
     def loop(self):
+        t_start = perfTimer()
         frame = CameraProvider.getCamera().getFrame()
         detections, frame_resized = self.pylonDetector.findObjects(frame)
 
@@ -48,6 +50,8 @@ class SearchingState(NestedState):
         except LowLevelControllerException as e:
             logging.error(e)
             self.parent.mission_control.stop()
+        t_end = perfTimer()
+        logging.debug("Searching State Looptime = {0}".format(t_end - t_start))
         
     def onExit(self, event):
         pass
