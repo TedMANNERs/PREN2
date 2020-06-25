@@ -10,6 +10,7 @@ from states.running.navigating_state import NavigatingState
 from states.running.reversing_state import ReversingState
 from states.running.crossingObstacle_state import CrossingObstacleState
 from states.running.emergency_state import EmergencyState
+from timeit import default_timer as timer
 
 class RunningState(NestedState):
     def __init__(self, llc: LowLevelController, detector: PylonDetector, navigator: Navigator, mission_control):
@@ -43,7 +44,10 @@ class RunningState(NestedState):
         try:
             while (self._isRunning):
                 if self.substate:
+                    start = timer()
                     self.substate.loop()
+                    end = timer()
+                    logging.debug("Looptime = {0}".format(end - start))
         except Exception as e:
             logging.exception(e)
             self.mission_control.fail(e)
