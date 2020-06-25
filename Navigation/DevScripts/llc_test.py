@@ -15,6 +15,7 @@ def move(llc: LowLevelController, getVectorFunction):
         llc.sendTargetVector(getVectorFunction())
         time.sleep(0.05)
     timer.stop()
+    llc.sendStop()
 
 def llc_test():
     logging.basicConfig(
