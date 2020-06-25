@@ -18,6 +18,7 @@ from states.error_state import ErrorState
 from states.parcoursCompleted_state import ParcoursCompletedState
 from configreader import parser
 from distutils.util import strtobool
+from timeit import default_timer as timer
 
 #TODO: Replace strings with constants
 class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
@@ -40,11 +41,21 @@ class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
         ]
         
         super().__init__(model=self, states=states, transitions=transitions, initial='init', send_event=True, queued=True)
-        ENABLE_STATE_DIAGRAM = bool(strtobool(parser.get("debug", "ENABLE_STATE_DIAGRAM")))
-        if ENABLE_STATE_DIAGRAM:
-            self.before_state_change = self.update_state_diagram
-            self.after_state_change = self.update_state_diagram
+        self.before_state_change = self.before_State_Change
+        self.after_state_change = self.after_State_Change
+        self.ENABLE_STATE_DIAGRAM = bool(strtobool(parser.get("debug", "ENABLE_STATE_DIAGRAM")))
 
+    def before_State_Change(self, event):
+        self.t_start = timer()
+        if self.ENABLE_STATE_DIAGRAM:
+            self.update_state_diagram(event)
+
+    def after_State_Change(self, event):
+        if self.ENABLE_STATE_DIAGRAM:
+            self.update_state_diagram(event)
+            
+        self.t_end = timer()
+        logging.debug("Time for state change = {0}".format(self.t_end - self.t_start))
 
     def update_state_diagram(self, event):
         graph = self.model.get_graph()
