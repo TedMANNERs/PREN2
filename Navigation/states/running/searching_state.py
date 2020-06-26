@@ -31,7 +31,7 @@ class SearchingState(NestedState):
 
         for detection in detections:
             if detection[0] == Label.Pylon.value:
-                #logging.debug(detections)
+                logging.debug("### PYLON DETECTED ###")
                 self.parent.mission_control.navigate()
                 return
                 

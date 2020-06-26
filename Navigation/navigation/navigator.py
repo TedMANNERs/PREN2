@@ -63,7 +63,7 @@ class Navigator:
         else:
             self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=0)
         self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
-        logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
+        #logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
         return TargetVector(np.int16(self.currentSpeed), np.int16(self.currentAngle))
 
     def _getReverseVector(self):
@@ -72,19 +72,19 @@ class Navigator:
         else:
             self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT, minValue=0)
         self._updateCurrentSpeed(self.currentSpeed - self.SPEED_INCREMENT, minValue=self.REVERSE_SPEED)
-        logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
+        #logging.info("MOVE_STRAIGHT: Speed=%s", self.currentSpeed)
         return TargetVector(np.int16(self.currentSpeed), np.int16(self.currentAngle))
 
     def _getTurnRightVector(self):
         newSpeed = self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
         newAngle = self._updateCurrentAngle(self.currentAngle + self.ANGLE_INCREMENT)
-        logging.info("TURN_RIGHT: Speed=%s, Angle=%s", self.currentSpeed, self.currentAngle)
+        #logging.info("TURN_RIGHT: Speed=%s, Angle=%s", self.currentSpeed, self.currentAngle)
         return TargetVector(np.int16(newSpeed), np.int16(newAngle))
 
     def _getTurnLeftVector(self):
         newSpeed = self._updateCurrentSpeed(self.currentSpeed + self.SPEED_INCREMENT)
         newAngle = self._updateCurrentAngle(self.currentAngle - self.ANGLE_INCREMENT)
-        logging.info("TURN_LEFT: Speed=%s, Angle=%s", self.currentSpeed, self.currentAngle)
+        #logging.info("TURN_LEFT: Speed=%s, Angle=%s", self.currentSpeed, self.currentAngle)
         return TargetVector(np.int16(newSpeed), np.int16(newAngle))
 
     def _updateCurrentSpeed(self, value, minValue = 0, maxValue = None):
