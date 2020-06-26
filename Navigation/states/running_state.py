@@ -19,11 +19,11 @@ class RunningState(NestedState):
         self.navigator = navigator
         self.mission_control = mission_control
 
-        self.substate = None
+        self.substate = SearchingState(self, llc, detector, navigator)
 
         super().__init__(name='running', on_enter=self.onEnter, on_exit=self.onExit, initial='searching')
         self.add_substates([
-                    SearchingState(self, llc, detector, navigator),
+                    self.substate,
                     NavigatingState(self, llc, detector, navigator),
                     ReversingState(self),
                     CrossingObstacleState(self),
@@ -43,13 +43,12 @@ class RunningState(NestedState):
     def _loop(self):
         try:
             while (self._isRunning):
-                if self.substate:
-                    start = timer()
-                    self.substate.loop()
-                    end = timer()
-                    total = end - start
-                    if total > 1:
-                        logging.debug("Running State Looptime = {0}".format(end - start))
+                start = timer()
+                self.substate.loop()
+                end = timer()
+                total = end - start
+                if total > 1:
+                    logging.debug("Running State Looptime = {0}".format(end - start))
         except Exception as e:
             logging.exception(e)
             self.mission_control.fail(e)
