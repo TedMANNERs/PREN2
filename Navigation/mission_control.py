@@ -40,7 +40,7 @@ class MissionControl(LockedHierarchicalGraphMachine, Subscriber):
             { 'trigger': 'fail', 'source': ['init', 'ready', 'running'], 'dest': 'error'}
         ]
         
-        super().__init__(model=self, states=states, transitions=transitions, initial='init', send_event=True, queued=True)
+        super().__init__(model=self, states=states, transitions=transitions, initial='init', send_event=True)
         self.before_state_change = self.before_State_Change
         self.after_state_change = self.after_State_Change
         self.ENABLE_STATE_DIAGRAM = bool(strtobool(parser.get("debug", "ENABLE_STATE_DIAGRAM")))
