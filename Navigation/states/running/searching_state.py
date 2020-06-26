@@ -51,7 +51,9 @@ class SearchingState(NestedState):
             logging.error(e)
             self.parent.mission_control.stop()
         t_end = perfTimer()
-        logging.debug("Searching State Looptime = {0}".format(t_end - t_start))
+        total = t_end - t_start
+        if total > 1:
+            logging.debug("Searching State Looptime = {0}".format(t_end - t_start))
         
     def onExit(self, event):
         pass

@@ -47,7 +47,9 @@ class RunningState(NestedState):
                     start = timer()
                     self.substate.loop()
                     end = timer()
-                    logging.debug("Running State Looptime = {0}".format(end - start))
+                    total = end - start
+                    if total > 1:
+                        logging.debug("Running State Looptime = {0}".format(end - start))
         except Exception as e:
             logging.exception(e)
             self.mission_control.fail(e)
