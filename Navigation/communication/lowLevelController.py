@@ -154,6 +154,8 @@ class LowLevelController:
         leftEncoder = np.fromstring(leftEncoderData, dtype=self.INT_16_DTYPE)
         rightEncoder = np.fromstring(rightEncoderData, dtype=self.INT_16_DTYPE)
 
+        logging.debug("---[LeftEncoder = {0}, RightEncoder = {1}]---".format(leftEncoder, rightEncoder))
+
         #read range finder
         angledDistanceData = self.serialPort.read(self.INT_16_SIZE) #Switched with straightDistanceSensor because the cables are incorrectly attached on the vehicle
         straightDistanceData = self.serialPort.read(self.INT_16_SIZE)
